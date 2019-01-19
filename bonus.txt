@@ -1,0 +1,30 @@
+Bonus:
+
+- AudioModule to play music, sound effects, and announce who is winner/loser!
+- Local multi-player!
+- Network multi-player!
+
+
+More Bonus:
+
+- Phat-ass UML diagram!
+- Amazing status/score board!
+- Well defined win/lose game states!
+- Get rekt by cute animals!
+- Snake head looks different from snake body!
+- Each snake cell shows direction!
+
+- (SDL) G to toggle grid on/off
+
+- (OpenGL) 3D with shading!
+- (OpenGL) First/third person point of view!
+- (OpenGL) Pizza that spins itself!
+
+
+
+
+TODO:
+
+- Network multi-player!		// fuck da police
+
+
