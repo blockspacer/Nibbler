@@ -106,7 +106,7 @@ void					Model::_readOBJFile(std::string & filename)
 	objFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	try
 	{
-		objFile.open(ResourceManager::getInstance().getAbsolutePathname(filename));
+		objFile.open(ResourceManager::getInstance().getBasePath(filename));
 		objStream << objFile.rdbuf();
 	}
 	catch (std::ifstream::failure e)
@@ -433,7 +433,7 @@ void					Model::_initTexture(std::string filename)
 	SDL_Surface *		surface;
 	int					colorFormat;
 
-	surface = IMG_Load(ResourceManager::getInstance().getAbsolutePathname(filename).c_str());
+	surface = IMG_Load(ResourceManager::getInstance().getBasePath(filename).c_str());
 	if (!surface)
 		throw NibblerException("Model::_initTexture() failed on " + filename);
 	colorFormat = (surface->format->BytesPerPixel == 4) ? GL_RGBA : GL_RGB;

@@ -28,9 +28,7 @@ void			SFMLModule::disable(void)
 void			SFMLModule::enable(void)
 {
 	// printf("SFMLModule: enable()\n");
-	this->_renderWindow.create(
-		sf::VideoMode(this->_board.getWidth() * CELL_WIDTH, this->_board.getHeight() * CELL_WIDTH),
-		"SFML");
+	this->_renderWindow.create(sf::VideoMode(this->_board.getWidth() * CELL_WIDTH, this->_board.getHeight() * CELL_WIDTH), "SFML");
 	this->_renderWindow.setPosition(sf::Vector2i(0, 0));
 	this->_renderWindow.setKeyRepeatEnabled(false);
 }
@@ -113,49 +111,44 @@ void			SFMLModule::_handleKeyPressEvent(sf::Event & event)
 
 void			SFMLModule::render(void)
 {
-	this->_renderWindow.clear(sf::Color::Black);
-
-	this->_renderCells();
-
-	this->_renderWindow.display();
-}
-
-void			SFMLModule::_renderCells(void)
-{
 	Cell *		cell;
 
+	this->_renderWindow.clear(sf::Color::Black);
 	for (int x = 0; x < this->_board.getWidth(); x++)
 		for (int y = 0; y < this->_board.getHeight(); y++)
 			if ((cell = this->_board.getCell(x, y)))
-				this->_renderCellAtPosition(*cell, x, y);
+				this->_renderCell(*cell);
+	this->_renderWindow.display();
 }
 
-void			SFMLModule::_renderCellAtPosition(Cell & cell, int x, int y)
+void			SFMLModule::_renderCell(Cell & cell)
 {
 	sf::RectangleShape	rect;
-	SnakeCell *			snakeCell;
-	FoodCell *			foodCell;
-	EnemyCell *			enemyCell;
 
 	rect.setSize(sf::Vector2f(CELL_WIDTH, CELL_WIDTH));
-	rect.setPosition(x * CELL_WIDTH, y * CELL_WIDTH);
-
-	if ((snakeCell = dynamic_cast<SnakeCell *>(&cell)))
-		this->_renderSnakeCell(*snakeCell, rect);
-	else if ((foodCell = dynamic_cast<FoodCell *>(&cell)))
-		this->_renderFoodCell(*foodCell, rect);
-	else if ((enemyCell = dynamic_cast<EnemyCell *>(&cell)))
-		this->_renderEnemyCell(*enemyCell, rect);
-	else
-		;	// some other type of cell?
-
+	rect.setPosition(cell.getX() * CELL_WIDTH, cell.getY() * CELL_WIDTH);
+	try
+	{
+		this->_renderSnakeCell(dynamic_cast<SnakeCell &>(cell), rect);
+	}
+	catch (std::bad_cast& bc)
+	{
+		try
+		{
+			this->_renderFoodCell(dynamic_cast<FoodCell &>(cell), rect);
+		}
+		catch (std::bad_cast& bc)
+		{
+			this->_renderEnemyCell(dynamic_cast<EnemyCell &>(cell), rect);
+		}
+	}
 }
 
 void		SFMLModule::_renderSnakeCell(SnakeCell & snakeCell, sf::RectangleShape & rect)
 {
 	// Player dieded
-	if (snakeCell.getSnake().isDead())
-		rect.setFillColor(sf::Color(128, 128, 128));	// gray
+	if (snakeCell.getSnake().isDead() && snakeCell.isHead())
+		rect.setFillColor(sf::Color(128, 128, 128));	// Grey
 	// Player 1
 	else if (snakeCell.getSnake().getID() == 0)
 	{

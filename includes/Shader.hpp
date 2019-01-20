@@ -21,14 +21,14 @@ public:
 
 private:
 
-	unsigned int	_shaderProgramID;
+	unsigned int	_programID;
 
 	Shader(const Shader & src);
 	Shader & operator=(const Shader & rhs);
 
 	std::string		_readShaderFile(std::string filename);
-	void			_compileShaderCode(unsigned int & shaderID, GLenum shaderType, const char * shaderCode);
-	void			_linkShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
+	unsigned int	_compileShaderCode(GLenum shaderType, const char * shaderCode);
+	unsigned int	_linkShaderProgram(unsigned int vertexShader, unsigned int fragmentShader);
 
 };
 

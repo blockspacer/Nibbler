@@ -69,7 +69,7 @@ Nibbler::Nibbler(int boardWidth, int boardHeight, unsigned short port) :
 	this->_board = new Board(boardWidth, boardHeight);
 	this->_snakes.resize(2);
 
-	for (int i = 0; i < NUM_MODULES; i++)
+	for (int i = 0; i < N_MODULES; i++)
 		this->_modules[i] = nullptr;
 
 
@@ -95,7 +95,7 @@ Nibbler::Nibbler(std::string & ipAddress, int port) :
 	this->_snakes.resize(2);
 
 	this->_board = nullptr;
-	for (int i = 0; i < NUM_MODULES; i++)
+	for (int i = 0; i < N_MODULES; i++)
 		this->_modules[i] = nullptr;
 
 
@@ -199,7 +199,7 @@ Nibbler::~Nibbler(void)
 	delete this->_client;
 
 	delete this->_board;
-	for (int i = 0; i < NUM_MODULES; i++)
+	for (int i = 0; i < N_MODULES; i++)
 		delete this->_modules[i];
 }
 
@@ -207,7 +207,7 @@ Nibbler::~Nibbler(void)
 
 void		Nibbler::_loop(void)
 {
-	double lag = 0.0;
+	double t = 0.0;
 	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime = std::chrono::high_resolution_clock::now();
 
 	while (!this->_exitProgram)
@@ -215,15 +215,15 @@ void		Nibbler::_loop(void)
 		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsedTime = currentTime - previousTime;
 		std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime);
-		lag += ms.count();
+		t += ms.count();
 		previousTime = currentTime;
 
 		this->_handleEvents();
 
-		if (lag >= MS_PER_UPDATE)
+		if (t >= MS_PER_UPDATE)
 		{
 			this->_update();
-			lag -= MS_PER_UPDATE;
+			t -= MS_PER_UPDATE;
 		}
 		this->_render();
 		// this->_displayGameStatus();
@@ -233,7 +233,6 @@ void		Nibbler::_loop(void)
 void		Nibbler::_handleEvents(void)
 {
 	this->_modules[this->_moduleIndex]->handleEvents();
-	// this->_currentModule->handleEvents();
 }
 
 void		Nibbler::_update(void)
@@ -313,7 +312,6 @@ void		Nibbler::_spawnEnemies(void)
 void		Nibbler::_render(void)
 {
 	this->_modules[this->_moduleIndex]->render();
-	// this->_currentModule->render();
 }
 
 void		Nibbler::_checkIfRoundIsOver(void)
@@ -326,14 +324,14 @@ void		Nibbler::_checkIfRoundIsOver(void)
 		{
 			this->_isRoundOver = true;
 			this->_winner = "Nobody";
-			AudioManager::getInstance().announce1PLose();
+			AudioManager::getInstance().playSFX("1p_lose");
 		}
 		// P1 won
 		else if (this->_snakes[0]->getLength() >= LENGTH_TO_WIN)
 		{
 			this->_isRoundOver = true;
 			this->_winner = "Player 1";
-			AudioManager::getInstance().announce1PWin();
+			AudioManager::getInstance().playSFX("1p_win");
 			this->_players[0].incrementWinCount();
 		}
 	}
@@ -345,14 +343,14 @@ void		Nibbler::_checkIfRoundIsOver(void)
 		{
 			this->_isRoundOver = true;
 			this->_winner = "Nobody";
-			AudioManager::getInstance().announce2PAllLose();
+			AudioManager::getInstance().playSFX("2p_all_lose");
 		}
 		// P1 won
 		else if (this->_snakes[1]->isDead() || this->_snakes[0]->getLength() >= LENGTH_TO_WIN)
 		{
 			this->_isRoundOver = true;
 			this->_winner = "Player 1";
-			AudioManager::getInstance().announce2PP1Win();
+			AudioManager::getInstance().playSFX("2p_p1_win");
 			this->_players[0].incrementWinCount();
 		}
 		// P2 won
@@ -360,7 +358,7 @@ void		Nibbler::_checkIfRoundIsOver(void)
 		{
 			this->_isRoundOver = true;
 			this->_winner = "Player 2";
-			AudioManager::getInstance().announce2PP2Win();
+			AudioManager::getInstance().playSFX("2p_p2_win");
 			this->_players[1].incrementWinCount();
 		}
 	}
@@ -401,7 +399,7 @@ void		Nibbler::selectNextModule(void)
 	this->_modules[this->_moduleIndex]->disable();
 	// printf("AFTER disable()\n");
 
-	this->_moduleIndex = (this->_moduleIndex + 1) % NUM_MODULES;
+	this->_moduleIndex = (this->_moduleIndex + 1) % N_MODULES;
 
 	// printf("BEFORE enable()\n");
 	this->_modules[this->_moduleIndex]->enable();
@@ -455,12 +453,11 @@ void		Nibbler::selectModule3(void)
 	this->_toggleModules(2);
 }
 
-
 void		Nibbler::_toggleModules(int nextIndex)
 {
 	if (this->_moduleIndex != nextIndex)
 	{
-		for (int i = 0; i < NUM_MODULES; i++)
+		for (int i = 0; i < N_MODULES; i++)
 			this->_modules[i]->disable();
 
 		// this->_modules[this->_moduleIndex]->disable();

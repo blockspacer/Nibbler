@@ -131,18 +131,14 @@ t_options			parseOptions(int argc, char * argv[])
 	}
 	else
 		terminateWithUsageError();
-
 	return (options);
 }
 
 int					main(int argc, char * argv[])
 {
-	t_options		options;
-
 	try
 	{
 		t_options options = parseOptions(argc, argv);
-		// parseOptions(argc, argv, options);
 		startGame(options);
 	}
 	catch (NibblerException & exception)

@@ -7,7 +7,7 @@
 # include <vector>
 
 # define MAX_PLAYERS	2
-# define NUM_MODULES	3
+# define N_MODULES		3
 # define LENGTH_TO_WIN	10
 
 # define MAX_BOARD_LEN	50
@@ -26,9 +26,9 @@ class Nibbler
 {
 public:
 
-	Nibbler(int boardWidth, int boardHeight, int numPlayers);
-	Nibbler(int boardWidth, int boardHeight, unsigned short port);
-	Nibbler(std::string & ipAddress, int port);
+	Nibbler(int boardWidth, int boardHeight, int numPlayers);		// local game constructor
+	Nibbler(int boardWidth, int boardHeight, unsigned short port);	// online server constructor
+	Nibbler(std::string & ipAddress, int port);						// online client constructor
 	
 	~Nibbler(void);
 
@@ -54,8 +54,6 @@ public:
 	SnakeCell &		getPlayer1SnakeHeadCell(void) const;
 
 
-
-
 	void			_update(void);			// move back to private later
 
 private:
@@ -69,15 +67,11 @@ private:
 
 	Board *			_board;
 
-
-	// IModule *		_currentModule;
-
-	IModule *		_modules[NUM_MODULES];
+	IModule *		_modules[N_MODULES];
 	int				_moduleIndex;
 
 	Player								_players[MAX_PLAYERS];
 	std::vector<std::unique_ptr<Snake>>	_snakes;
-
 	std::vector<std::shared_ptr<Enemy>>	_enemies;
 
 	bool			_isOnline;

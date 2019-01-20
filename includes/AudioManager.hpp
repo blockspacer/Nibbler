@@ -2,28 +2,29 @@
 # define AUDIO_MANAGER_HPP
 
 # include <string>
+# include <vector>
+# include <unordered_map>
 # include <SDL.h>
 # include <SDL_mixer.h>
 
 # define MIX_FLAGS			(MIX_INIT_OGG)
 
-# define BGM_COUNT			16
 # define BGM_00				"bgm/ANewMorning.ogg"
-# define BGM_01				"bgm/Crystals.mp3"
-# define BGM_02				"bgm/Daisuke.mp3"
-# define BGM_03				"bgm/DeepCover.mp3"
-# define BGM_04				"bgm/ElectricDreams.mp3"
-# define BGM_05				"bgm/Flatline.mp3"
-# define BGM_06				"bgm/Hotline.mp3"
-# define BGM_07				"bgm/Hydrogen.mp3"
-# define BGM_08				"bgm/InnerAnimal.mp3"
-# define BGM_09				"bgm/ItsSafeNow.mp3"
-# define BGM_10				"bgm/Knock.mp3"
-# define BGM_11				"bgm/Miami2.mp3"
-# define BGM_12				"bgm/Musikk2.mp3"
-# define BGM_13				"bgm/Paris2.mp3"
-# define BGM_14				"bgm/Perturbator.mp3"
-# define BGM_15				"bgm/TurfMain.mp3"
+# define BGM_01				"bgm/Crystals.ogg"
+# define BGM_02				"bgm/Daisuke.ogg"
+# define BGM_03				"bgm/DeepCover.ogg"
+# define BGM_04				"bgm/ElectricDreams.ogg"
+# define BGM_05				"bgm/Flatline.ogg"
+# define BGM_06				"bgm/Hotline.ogg"
+# define BGM_07				"bgm/Hydrogen.ogg"
+# define BGM_08				"bgm/InnerAnimal.ogg"
+# define BGM_09				"bgm/ItsSafeNow.ogg"
+// # define BGM_10				"bgm/Knock.ogg"
+// # define BGM_11				"bgm/Miami2.ogg"
+// # define BGM_12				"bgm/Musikk2.ogg"
+// # define BGM_13				"bgm/Paris2.ogg"
+// # define BGM_14				"bgm/Perturbator.ogg"
+// # define BGM_15				"bgm/TurfMain.ogg"
 
 # define EATING_SFX			"sounds/om_nom.wav"
 # define DEATH_SFX			"sounds/wilheim_scream.wav"
@@ -45,38 +46,19 @@ public:
 	static AudioManager &	getInstance(void);
 
 	void					playBGM(void);
-	void					playEatingSFX(void);
-	void					playDeathSFX(void);
-	void					playHurtSFX(void);
-
-	void					announce1PWin(void);
-	void					announce1PLose(void);
-
-	void					announce2PP1Win(void);
-	void					announce2PP2Win(void);
-	void					announce2PAllLose(void);
+	void					playSFX(std::string id);
 
 private:
 
-	Mix_Music *				_bgm[BGM_COUNT];
-
-	Mix_Chunk *				_eatingSFX;
-	Mix_Chunk *				_deathSFX;
-	Mix_Chunk *				_hurtSFX;
-
-	Mix_Chunk *				_1PWinSFX;
-	Mix_Chunk *				_1PLoseSFX;
-
-	Mix_Chunk *				_2PP1WinSFX;
-	Mix_Chunk *				_2PP2WinSFX;
-	Mix_Chunk *				_2PAllLoseSFX;
+	std::vector<Mix_Music *>						_bgmClips;
+	std::unordered_map<std::string, Mix_Chunk *>	_sfxClips;
 
 	AudioManager(void);
 	AudioManager(const AudioManager & src);
 	AudioManager & operator=(const AudioManager & rhs);
 
-	void					_loadMusic(Mix_Music ** target, std::string filename);
-	void					_loadWAV(Mix_Chunk ** target, std::string filename);
+	Mix_Music *				_loadBGM(std::string filename);
+	Mix_Chunk *				_loadSFX(std::string filename);
 
 };
 

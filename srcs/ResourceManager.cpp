@@ -24,7 +24,7 @@ ResourceManager::ResourceManager(void)
 
 ResourceManager::~ResourceManager(void) { }
 
-std::string		ResourceManager::getAbsolutePathname(std::string filename)
+std::string		ResourceManager::getBasePath(std::string filename)
 {
 	return (this->_basePath + filename);
 }

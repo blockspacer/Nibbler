@@ -7,15 +7,14 @@
 
 Shader::Shader(void)
 {
-	unsigned int	vertexShaderID;
-	unsigned int	fragmentShaderID;
-	std::string		vertexShaderCode = this->_readShaderFile(VERTEX_SHADER_FILE);
-	std::string		fragmentShaderCode = this->_readShaderFile(FRAGMENT_SHADER_FILE);
+	std::string			vertexShaderCode = this->_readShaderFile(VERTEX_SHADER_FILE);
+	std::string			fragmentShaderCode = this->_readShaderFile(FRAGMENT_SHADER_FILE);
 
-	this->_compileShaderCode(vertexShaderID, GL_VERTEX_SHADER, vertexShaderCode.c_str());
-	this->_compileShaderCode(fragmentShaderID, GL_FRAGMENT_SHADER, fragmentShaderCode.c_str());
-	this->_linkShaderProgram(vertexShaderID, fragmentShaderID);
-	glUseProgram(this->_shaderProgramID);
+	unsigned int		vertexShaderID = this->_compileShaderCode(GL_VERTEX_SHADER, vertexShaderCode.c_str());
+	unsigned int		fragmentShaderID = this->_compileShaderCode(GL_FRAGMENT_SHADER, fragmentShaderCode.c_str());
+	
+	this->_programID = this->_linkShaderProgram(vertexShaderID, fragmentShaderID);
+	glUseProgram(this->_programID);
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 }
@@ -29,7 +28,7 @@ std::string				Shader::_readShaderFile(std::string filename)
 	shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	try
 	{
-		shaderFile.open(ResourceManager::getInstance().getAbsolutePathname(filename));
+		shaderFile.open(ResourceManager::getInstance().getBasePath(filename));
 		shaderStream << shaderFile.rdbuf();
 		shaderCode = shaderStream.str();
 	}
@@ -41,10 +40,11 @@ std::string				Shader::_readShaderFile(std::string filename)
 }
 
 
-void		Shader::_compileShaderCode(unsigned int & shaderID, GLenum shaderType, const char * shaderCode)
+unsigned int			Shader::_compileShaderCode(GLenum shaderType, const char * shaderCode)
 {
-	int		success;
-	char	infoLog[LOG_SIZE];
+	unsigned int		shaderID;
+	int					success;
+	char				infoLog[LOG_SIZE];
 
 	shaderID = glCreateShader(shaderType);
 	glShaderSource(shaderID, 1, &shaderCode, NULL);
@@ -56,62 +56,51 @@ void		Shader::_compileShaderCode(unsigned int & shaderID, GLenum shaderType, con
 		glGetShaderInfoLog(shaderID, LOG_SIZE, NULL, infoLog);
 		throw NibblerException(std::string("glCompileShader() failed:\n") + std::string(infoLog));
 	}
+	return (shaderID);
 }
 
-void		Shader::_linkShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
+unsigned int			Shader::_linkShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
 {
-	int		success;
-	char	infoLog[LOG_SIZE];
+	unsigned int		programID;
+	int					success;
+	char				infoLog[LOG_SIZE];
 
-	this->_shaderProgramID = glCreateProgram();
-	glAttachShader(this->_shaderProgramID, vertexShader);
-	glAttachShader(this->_shaderProgramID, fragmentShader);
-	glLinkProgram(this->_shaderProgramID);
+	programID = glCreateProgram();
+	glAttachShader(programID, vertexShader);
+	glAttachShader(programID, fragmentShader);
+	glLinkProgram(programID);
 
-	glGetProgramiv(this->_shaderProgramID, GL_LINK_STATUS, &success);
+	glGetProgramiv(programID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-	    glGetProgramInfoLog(this->_shaderProgramID, LOG_SIZE, NULL, infoLog);
+	    glGetProgramInfoLog(programID, LOG_SIZE, NULL, infoLog);
 	    throw NibblerException(std::string("glLinkProgram() failed:\n") + std::string(infoLog));
 	}
+	return (programID);
 }
 
 Shader::~Shader(void)
 {
-	glDeleteProgram(this->_shaderProgramID);
+	glDeleteProgram(this->_programID);
 }
-
-
 
 void				Shader::setMatrix(std::string name, const float * matrix)
 {
-	unsigned int	matrixLoc = glGetUniformLocation(this->_shaderProgramID, name.c_str());
+	unsigned int	matrixLoc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniformMatrix4fv(matrixLoc, 1, GL_FALSE, matrix);
 }
 
 void				Shader::setVector3(std::string name, float * vector)
 {
-	unsigned int		vectorLoc = glGetUniformLocation(this->_shaderProgramID, name.c_str());
+	unsigned int		vectorLoc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniform3fv(vectorLoc, 1, vector);
 }
 
 void				Shader::setBool(std::string name, bool value)
 {
-	unsigned int	loc = glGetUniformLocation(this->_shaderProgramID, name.c_str());
+	unsigned int	loc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniform1i(loc, static_cast<int>(value));
 }
-
-
-
-
-
-
-
-
-
-
-
-

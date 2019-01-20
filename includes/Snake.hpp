@@ -43,15 +43,13 @@ private:
 	Snake(const Snake & src);
 	Snake &	operator=(const Snake & rhs);
 
-
 	void									_initSnakeCells(int x, int y);
 	void									_registerSnakeCellsToBoard(void);
 
 	void									_getNextXY(int & nextX, int & nextY) const;
 	void									_interactWithTarget(Cell & target);
 	void									_moveAndGrow(int newX, int newY, bool isGrowing);
-	
-	
+
 };
 
 #endif

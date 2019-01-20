@@ -84,7 +84,7 @@ void		Snake::die(void)
 	if (this->_isDead)
 		return;
 
-	AudioManager::getInstance().playDeathSFX();
+	AudioManager::getInstance().playSFX("death");
 	this->_isDead = true;
 	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
 		this->_board.clearCell(snakeCell->getX(), snakeCell->getY());
@@ -149,7 +149,7 @@ void		Snake::_interactWithTarget(Cell & target)
 	if (dynamic_cast<FoodCell *>(&target))
 	{
 		target.getHit();
-		AudioManager::getInstance().playEatingSFX();
+		AudioManager::getInstance().playSFX("eating");
 		this->_moveAndGrow(targetX, targetY, true);
 		this->_player.incrementScore();
 	}
@@ -248,7 +248,7 @@ void		Snake::debug(void)
 
 void		Snake::getHitAtIndex(size_t index)
 {
-	AudioManager::getInstance().playHurtSFX();
+	AudioManager::getInstance().playSFX("hurt");
 	for (size_t i = index; i < this->_snakeCells.size(); i++)
 	{
 		int x = this->_snakeCells[i]->getX();

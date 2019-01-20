@@ -41,8 +41,7 @@ private:
 
 	void						_handleKeyPressEvent(sf::Event & event);
 
-	void						_renderCells(void);
-	void						_renderCellAtPosition(Cell & cell, int x, int y);
+	void						_renderCell(Cell & cell);
 	void						_renderSnakeCell(SnakeCell & snakeCell, sf::RectangleShape & rect);
 	void						_renderFoodCell(FoodCell & foodCell, sf::RectangleShape & rect);
 	void						_renderEnemyCell(EnemyCell & enemyCell, sf::RectangleShape & rect);

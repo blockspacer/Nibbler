@@ -27,53 +27,35 @@ SDLModule::SDLModule(Nibbler & nibbler, Board & board) :
 	if ((IMG_Init(IMG_FLAGS) & IMG_FLAGS) != IMG_FLAGS)
 		throw NibblerException("IMG_Init() failed");
 
-	this->_initTexture(&this->_snakeHeadP1Texture[0], SNAKE_HEAD_E_IMAGE_1);
-	this->_initTexture(&this->_snakeHeadP1Texture[1], SNAKE_HEAD_S_IMAGE_1);
-	this->_initTexture(&this->_snakeHeadP1Texture[2], SNAKE_HEAD_W_IMAGE_1);
-	this->_initTexture(&this->_snakeHeadP1Texture[3], SNAKE_HEAD_N_IMAGE_1);
+	this->_snakeHeadP1Texture = this->_initTexture(SNAKE_HEAD_P1_IMAGE);
+	this->_snakeBodyP1Texture = this->_initTexture(SNAKE_BODY_P1_IMAGE);
+	this->_snakeHeadP2Texture = this->_initTexture(SNAKE_HEAD_P2_IMAGE);
+	this->_snakeBodyP2Texture = this->_initTexture(SNAKE_BODY_P2_IMAGE);
+	this->_snakeDeadTexture = this->_initTexture(SNAKE_DEAD_IMAGE);	
 
-	this->_initTexture(&this->_snakeBodyP1Texture[0], SNAKE_BODY_E_IMAGE_1);
-	this->_initTexture(&this->_snakeBodyP1Texture[1], SNAKE_BODY_S_IMAGE_1);
-	this->_initTexture(&this->_snakeBodyP1Texture[2], SNAKE_BODY_W_IMAGE_1);
-	this->_initTexture(&this->_snakeBodyP1Texture[3], SNAKE_BODY_N_IMAGE_1);
+	this->_foodTextures.push_back(this->_initTexture(FOOD_IMAGE_0));
+	this->_foodTextures.push_back(this->_initTexture(FOOD_IMAGE_1));
+	this->_foodTextures.push_back(this->_initTexture(FOOD_IMAGE_2));
+	this->_foodTextures.push_back(this->_initTexture(FOOD_IMAGE_3));
+	this->_foodTextures.push_back(this->_initTexture(FOOD_IMAGE_4));
 
-	this->_initTexture(&this->_snakeHeadP2Texture[0], SNAKE_HEAD_E_IMAGE_2);
-	this->_initTexture(&this->_snakeHeadP2Texture[1], SNAKE_HEAD_S_IMAGE_2);
-	this->_initTexture(&this->_snakeHeadP2Texture[2], SNAKE_HEAD_W_IMAGE_2);
-	this->_initTexture(&this->_snakeHeadP2Texture[3], SNAKE_HEAD_N_IMAGE_2);
-
-	this->_initTexture(&this->_snakeBodyP2Texture[0], SNAKE_BODY_E_IMAGE_2);
-	this->_initTexture(&this->_snakeBodyP2Texture[1], SNAKE_BODY_S_IMAGE_2);
-	this->_initTexture(&this->_snakeBodyP2Texture[2], SNAKE_BODY_W_IMAGE_2);
-	this->_initTexture(&this->_snakeBodyP2Texture[3], SNAKE_BODY_N_IMAGE_2);
-
-	this->_initTexture(&this->_snakeDeadTexture[0], SNAKE_DEAD_E_IMAGE);
-	this->_initTexture(&this->_snakeDeadTexture[1], SNAKE_DEAD_S_IMAGE);
-	this->_initTexture(&this->_snakeDeadTexture[2], SNAKE_DEAD_W_IMAGE);
-	this->_initTexture(&this->_snakeDeadTexture[3], SNAKE_DEAD_N_IMAGE);
-
-	this->_initTexture(&this->_foodTexture[0], FOOD_IMAGE_0);
-	this->_initTexture(&this->_foodTexture[1], FOOD_IMAGE_1);
-	this->_initTexture(&this->_foodTexture[2], FOOD_IMAGE_2);
-	this->_initTexture(&this->_foodTexture[3], FOOD_IMAGE_3);
-	this->_initTexture(&this->_foodTexture[4], FOOD_IMAGE_4);
-
-	this->_initTexture(&this->_enemyTexture[0], ENEMY_IMAGE_0);
-	this->_initTexture(&this->_enemyTexture[1], ENEMY_IMAGE_1);
-	this->_initTexture(&this->_enemyTexture[2], ENEMY_IMAGE_2);
-	this->_initTexture(&this->_enemyTexture[3], ENEMY_IMAGE_3);
-	this->_initTexture(&this->_enemyTexture[4], ENEMY_IMAGE_4);
-	this->_initTexture(&this->_enemyTexture[5], ENEMY_IMAGE_5);
-	this->_initTexture(&this->_enemyTexture[6], ENEMY_IMAGE_6);
-	this->_initTexture(&this->_enemyTexture[7], ENEMY_IMAGE_7);
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_0));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_1));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_2));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_3));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_4));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_5));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_6));
+	this->_enemyTextures.push_back(this->_initTexture(ENEMY_IMAGE_7));
 }
 
-void			SDLModule::_initTexture(SDL_Texture ** target, std::string filename)
+SDL_Texture *		SDLModule::_initTexture(std::string filename)
 {
-	*target = IMG_LoadTexture(this->_renderer, ResourceManager::getInstance().getAbsolutePathname(filename).c_str());
+	SDL_Texture *	texture = IMG_LoadTexture(this->_renderer, ResourceManager::getInstance().getBasePath(filename).c_str());
 
-	if (!*target)
+	if (!texture)
 		throw NibblerException("IMG_LoadTexture() failed on \'" + filename + "\'");
+	return (texture);
 }
 
 SDLModule::~SDLModule(void)
@@ -83,18 +65,16 @@ SDLModule::~SDLModule(void)
 	SDL_DestroyWindow(this->_window);
 	SDL_GL_DeleteContext(this->_context);
 
-	for (int i = 0; i < 4; i++)
-	{
-		SDL_DestroyTexture(this->_snakeHeadP1Texture[i]);
-		SDL_DestroyTexture(this->_snakeBodyP1Texture[i]);
-		SDL_DestroyTexture(this->_snakeHeadP2Texture[i]);
-		SDL_DestroyTexture(this->_snakeBodyP2Texture[i]);
-		SDL_DestroyTexture(this->_snakeDeadTexture[i]);
-	}
-	for (int i = 0; i < FOOD_IMAGE_COUNT; i++)
-		SDL_DestroyTexture(this->_foodTexture[i]);
-	for (int i = 0; i < ENEMY_IMAGE_COUNT; i++)
-		SDL_DestroyTexture(this->_enemyTexture[i]);
+	SDL_DestroyTexture(this->_snakeHeadP1Texture);
+	SDL_DestroyTexture(this->_snakeBodyP1Texture);
+	SDL_DestroyTexture(this->_snakeHeadP2Texture);
+	SDL_DestroyTexture(this->_snakeBodyP2Texture);
+	SDL_DestroyTexture(this->_snakeDeadTexture);
+	for (size_t i = 0; i < this->_foodTextures.size(); i++)
+		SDL_DestroyTexture(this->_foodTextures[i]);
+	for (size_t i = 0; i < this->_enemyTextures.size(); i++)
+		SDL_DestroyTexture(this->_enemyTextures[i]);
+
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -123,30 +103,6 @@ void			SDLModule::handleEvents(void)
 		else if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			this->_handleKeyPressEvent(event);
 	}
-	this->_handleKeyHeldEvent();
-}
-
-void			SDLModule::_handleKeyHeldEvent(void)
-{
-	static const Uint8 *	keyState = SDL_GetKeyboardState(NULL);
-
-	(void)keyState;
-
-	// if (keyState[SDL_SCANCODE_1])
-	// {
-	// 	printf("SDLModule: pressed 1\n");
-	// 	this->_nibbler.selectModule1();	
-	// }
-	// else if (keyState[SDL_SCANCODE_2])
-	// {
-	// 	printf("SDLModule: pressed 2\n");
-	// 	this->_nibbler.selectModule2();
-	// }
-	// else if (keyState[SDL_SCANCODE_3])
-	// {
-	// 	printf("SDLModule: pressed 3\n");
-	// 	this->_nibbler.selectModule3();
-	// }
 }
 
 void		SDLModule::_handleKeyPressEvent(SDL_Event & event)
@@ -222,20 +178,9 @@ void			SDLModule::_toggleGrid(void)
 	this->_isGridShown = !this->_isGridShown;
 }
 
-void			SDLModule::render(void)
-{
-	SDL_SetRenderDrawColor(this->_renderer, 0, 0, 0, 0);
-	SDL_RenderClear(this->_renderer);
-	if (this->_isGridShown)
-		this->_drawGrid();
-	this->_renderCells();
-	SDL_RenderPresent(this->_renderer);
-}
-
 void			SDLModule::_drawGrid(void)
 {
 	SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 0);
-	
 	// draw vertical lines
 	int verticalLength = this->_board.getHeight() * CELL_WIDTH;
 	for (int x = 0; x < this->_board.getWidth(); x++)
@@ -243,7 +188,6 @@ void			SDLModule::_drawGrid(void)
 		int xPosition = x * CELL_WIDTH;
 		SDL_RenderDrawLine(this->_renderer, xPosition, 0, xPosition, verticalLength);
 	}
-	
 	// draw horizontal lines
 	int horizontalLength = this->_board.getWidth() * CELL_WIDTH;
 	for (int y = 0; y < this->_board.getHeight(); y++)
@@ -253,72 +197,105 @@ void			SDLModule::_drawGrid(void)
 	}
 }
 
-void			SDLModule::_renderCells(void)
+void			SDLModule::render(void)
 {
 	Cell *		cell;
 
+	SDL_SetRenderDrawColor(this->_renderer, 0, 0, 0, 0);
+	SDL_RenderClear(this->_renderer);
+	if (this->_isGridShown)
+		this->_drawGrid();
 	for (int x = 0; x < this->_board.getWidth(); x++)
 		for (int y = 0; y < this->_board.getHeight(); y++)
 			if ((cell = this->_board.getCell(x, y)))
-				this->_renderCellAtPosition(*cell, x, y);
+				this->_renderCell(*cell);
+	SDL_RenderPresent(this->_renderer);
 }
 
-void			SDLModule::_renderCellAtPosition(Cell & cell, int x, int y)
+void			SDLModule::_renderCell(Cell & cell)
 {
-	SDL_Rect	dstRect = {x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH};
-	SnakeCell *	snakeCell;
-	FoodCell *	foodCell;
-	EnemyCell *	enemyCell;
+	SDL_Rect	dstRect;
 
-	if ((snakeCell = dynamic_cast<SnakeCell *>(&cell)))
-		this->_renderSnakeCell(*snakeCell, dstRect);
-	else if ((foodCell = dynamic_cast<FoodCell *>(&cell)))
-		this->_renderFoodCell(*foodCell, dstRect);
-	else if ((enemyCell = dynamic_cast<EnemyCell *>(&cell)))
-		this->_renderEnemyCell(*enemyCell, dstRect);
-	else
-		;	// some other type of cell?
+	dstRect.x = cell.getX() * CELL_WIDTH;
+	dstRect.y = cell.getY() * CELL_WIDTH;
+	dstRect.w = CELL_WIDTH;
+	dstRect.h = CELL_WIDTH;
+	try
+	{
+		this->_renderSnakeCell(dynamic_cast<SnakeCell &>(cell), dstRect);
+	}
+	catch (std::bad_cast& bc)
+	{
+		try
+		{
+			this->_renderFoodCell(dynamic_cast<FoodCell &>(cell), dstRect);
+		}
+		catch (std::bad_cast& bc)
+		{
+			this->_renderEnemyCell(dynamic_cast<EnemyCell &>(cell), dstRect);
+		}
+	}
 }
 
 void			SDLModule::_renderSnakeCell(SnakeCell & snakeCell, SDL_Rect & dstRect)
 {
-	SDL_Texture *	texture = NULL;
-	int				textureIndex = static_cast<int>(snakeCell.getDirection());
+	SDL_Texture *	texture;
+	double			angle;
 
+	switch (snakeCell.getDirection())
+	{
+		case NORTH:
+			angle = 0.0;
+			break;
+		case EAST:
+			angle = 90.0;
+			break;
+		case SOUTH:
+			angle = 180.0;
+			break;
+		case WEST:
+			angle = 270.0;
+			break;
+		default:
+			angle = 0.0;
+			break;
+	}
 	// Player dieded
 	if (snakeCell.getSnake().isDead())
-		texture = this->_snakeDeadTexture[textureIndex];
+	{
+		texture = this->_snakeDeadTexture;
+	}
 	// Player 1
 	else if (snakeCell.getSnake().getID() == 0)
 	{
 		if (snakeCell.isHead())
-			texture = this->_snakeHeadP1Texture[textureIndex];
+			texture = this->_snakeHeadP1Texture;
 		else
-			texture = this->_snakeBodyP1Texture[textureIndex];
+			texture = this->_snakeBodyP1Texture;
 	}
 	// Player 2
 	else
 	{
 		if (snakeCell.isHead())
-			texture = this->_snakeHeadP2Texture[textureIndex];
+			texture = this->_snakeHeadP2Texture;
 		else
-			texture = this->_snakeBodyP2Texture[textureIndex];
+			texture = this->_snakeBodyP2Texture;
 	}
-	SDL_RenderCopy(this->_renderer, texture, NULL, &dstRect);
+	SDL_RenderCopyEx(this->_renderer, texture, NULL, &dstRect, angle, NULL, SDL_FLIP_NONE);
 }
 
 void			SDLModule::_renderFoodCell(FoodCell & foodCell, SDL_Rect & dstRect)
 {
-	int			textureIndex = foodCell.getID() % FOOD_IMAGE_COUNT;
+	SDL_Texture *	texture = this->_foodTextures[foodCell.getID() % this->_foodTextures.size()];
 
-	SDL_RenderCopy(this->_renderer, this->_foodTexture[textureIndex], NULL, &dstRect);	
+	SDL_RenderCopy(this->_renderer, texture, NULL, &dstRect);	
 }
 
 void			SDLModule::_renderEnemyCell(EnemyCell & enemyCell, SDL_Rect & dstRect)
 {
-	int			textureIndex = enemyCell.getID() % ENEMY_IMAGE_COUNT;
+	SDL_Texture *	texture = this->_enemyTextures[enemyCell.getID() % this->_enemyTextures.size()];
 
-	SDL_RenderCopy(this->_renderer, this->_enemyTexture[textureIndex], NULL, &dstRect);	
+	SDL_RenderCopy(this->_renderer, texture, NULL, &dstRect);	
 }
 
 

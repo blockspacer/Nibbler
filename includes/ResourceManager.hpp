@@ -11,7 +11,7 @@ public:
 
 	static ResourceManager & getInstance(void);
 	
-	std::string				getAbsolutePathname(std::string filename);
+	std::string				getBasePath(std::string filename);
 
 private:
 

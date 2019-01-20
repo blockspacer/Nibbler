@@ -26,7 +26,7 @@ public:
 	void		debug(void);
 
 	void		generateFood(void);
-	
+
 private:
 
 	int									_width;
