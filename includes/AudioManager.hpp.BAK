@@ -5,10 +5,10 @@
 # include <SDL.h>
 # include <SDL_mixer.h>
 
-# define MIX_FLAGS			(MIX_INIT_OGG)
+# define MIX_FLAGS			(MIX_INIT_MP3)
 
 # define BGM_COUNT			16
-# define BGM_00				"bgm/ANewMorning.ogg"
+# define BGM_00				"bgm/ANewMorning.mp3"
 # define BGM_01				"bgm/Crystals.mp3"
 # define BGM_02				"bgm/Daisuke.mp3"
 # define BGM_03				"bgm/DeepCover.mp3"

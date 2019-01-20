@@ -23,21 +23,21 @@ AudioManager::AudioManager(void)
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 
 	this->_loadMusic(&this->_bgm[0], BGM_00);
-	// this->_loadMusic(&this->_bgm[1], BGM_01);
-	// this->_loadMusic(&this->_bgm[2], BGM_02);
-	// this->_loadMusic(&this->_bgm[3], BGM_03);
-	// this->_loadMusic(&this->_bgm[4], BGM_04);
-	// this->_loadMusic(&this->_bgm[5], BGM_05);
-	// this->_loadMusic(&this->_bgm[6], BGM_06);
-	// this->_loadMusic(&this->_bgm[7], BGM_07);
-	// this->_loadMusic(&this->_bgm[8], BGM_08);
-	// this->_loadMusic(&this->_bgm[9], BGM_09);
-	// this->_loadMusic(&this->_bgm[10], BGM_10);
-	// this->_loadMusic(&this->_bgm[11], BGM_11);
-	// this->_loadMusic(&this->_bgm[12], BGM_12);
-	// this->_loadMusic(&this->_bgm[13], BGM_13);
-	// this->_loadMusic(&this->_bgm[14], BGM_14);
-	// this->_loadMusic(&this->_bgm[15], BGM_15);
+	this->_loadMusic(&this->_bgm[1], BGM_01);
+	this->_loadMusic(&this->_bgm[2], BGM_02);
+	this->_loadMusic(&this->_bgm[3], BGM_03);
+	this->_loadMusic(&this->_bgm[4], BGM_04);
+	this->_loadMusic(&this->_bgm[5], BGM_05);
+	this->_loadMusic(&this->_bgm[6], BGM_06);
+	this->_loadMusic(&this->_bgm[7], BGM_07);
+	this->_loadMusic(&this->_bgm[8], BGM_08);
+	this->_loadMusic(&this->_bgm[9], BGM_09);
+	this->_loadMusic(&this->_bgm[10], BGM_10);
+	this->_loadMusic(&this->_bgm[11], BGM_11);
+	this->_loadMusic(&this->_bgm[12], BGM_12);
+	this->_loadMusic(&this->_bgm[13], BGM_13);
+	this->_loadMusic(&this->_bgm[14], BGM_14);
+	this->_loadMusic(&this->_bgm[15], BGM_15);
 
 	this->_loadWAV(&this->_eatingSFX, EATING_SFX);
 	this->_loadWAV(&this->_deathSFX, DEATH_SFX);
@@ -69,8 +69,8 @@ void		AudioManager::_loadWAV(Mix_Chunk ** target, std::string filename)
 
 AudioManager::~AudioManager(void)
 {
-	// for (int i = 0; i < BGM_COUNT; i++)
-	// 	Mix_FreeMusic(this->_bgm[i]);
+	for (int i = 0; i < BGM_COUNT; i++)
+		Mix_FreeMusic(this->_bgm[i]);
 	Mix_FreeChunk(this->_eatingSFX);
 	Mix_FreeChunk(this->_deathSFX);
 	Mix_Quit();
@@ -82,9 +82,7 @@ void			AudioManager::playBGM(void)
 	if (Mix_PlayingMusic())
 		Mix_HaltMusic();
 
-	// Mix_PlayMusic(this->_bgm[std::rand() % BGM_COUNT], -1);		// loop forever
-	Mix_PlayMusic(this->_bgm[0], -1);		// loop forever
-	printf("Play a BGM \n");
+	Mix_PlayMusic(this->_bgm[std::rand() % BGM_COUNT], -1);		// loop forever
 }
 
 void			AudioManager::playEatingSFX(void)
