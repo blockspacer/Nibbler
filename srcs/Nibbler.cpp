@@ -4,7 +4,7 @@
 #include "IModule.hpp"
 #include "SDLModule.hpp"
 #include "SFMLModule.hpp"
-#include "OpenGLModule3.hpp"
+#include "OpenGLModule.hpp"
 #include "Snake.hpp"
 #include "direction.hpp"
 #include "AudioManager.hpp"
@@ -136,7 +136,7 @@ void		Nibbler::_initModules(void)
 
 	// this->_modules[2] = new OpenGLModule(*this, *this->_board);
 	// this->_modules[2] = new OpenGLModule2(*this, *this->_board);
-	this->_modules[2] = new OpenGLModule3(*this, *this->_board);
+	this->_modules[2] = new OpenGLModule(*this, *this->_board);
 	this->_modules[2]->disable();
 
 	this->_moduleIndex = 0;

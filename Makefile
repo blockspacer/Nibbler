@@ -69,11 +69,9 @@ Enemy.cpp \
 EnemyCell.cpp \
 Shader.cpp \
 Model.cpp \
-OpenGLModule3.cpp \
+OpenGLModule.cpp \
 Server.cpp \
 Client.cpp
-# OpenGLModule.cpp \
-# OpenGLModule2.cpp
 
 OBJDIR := objs/
 OBJS := $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
