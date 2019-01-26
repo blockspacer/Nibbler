@@ -71,7 +71,8 @@ Shader.cpp \
 Model.cpp \
 OpenGLModule.cpp \
 Server.cpp \
-Client.cpp
+Client.cpp \
+ANetworkEntity.cpp
 
 OBJDIR := objs/
 OBJS := $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))

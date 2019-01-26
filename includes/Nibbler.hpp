@@ -74,9 +74,6 @@ private:
 	std::vector<std::unique_ptr<Snake>>	_snakes;
 	std::vector<std::shared_ptr<Enemy>>	_enemies;
 
-	bool			_isOnline;
-	bool			_isServer;
-
 	Server *		_server;
 	Client *		_client;
 

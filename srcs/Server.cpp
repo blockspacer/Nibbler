@@ -1,35 +1,62 @@
 #include "Server.hpp"
+#include "Nibbler.hpp"
 #include "NibblerException.hpp"
 #include "message.hpp"
+#include "Board.hpp"
+#include "Snake.hpp"
+#include "SnakeCell.hpp"
+
 #include <iostream>
 
-Server::Server(unsigned short port)
+Server::Server(Nibbler & nibbler, unsigned short port) : ANetworkEntity(nibbler)
 {
 	if (this->_listener.listen(port) != sf::Socket::Done)
-	{
 		throw NibblerException("sf::TcpListener::listen() failed");
-	}
 
 	std::cout << "[Server] Waiting for connection..." << std::endl;
 
-	if (this->_listener.accept(this->_client) != sf::Socket::Done)
-	{
+	if (this->_listener.accept(this->_socket) != sf::Socket::Done)
 		throw NibblerException("sf::TcpSocket::accept() failed");	
-	}
 
 	std::cout << "[Server] Connection successful!" << std::endl;
+
+	this->_listener.close();
 }
 
 Server::~Server(void)
 {
-	this->_client.disconnect();
-	this->_listener.close();
+	printf("~Server() \n");
+	this->_socket.disconnect();
 }
 
-void			Server::sendBoardDimensions(int boardWidth, int boardHeight)
+void			Server::sendBoardInfo(Board & board)
 {
 	sf::Packet	packet;
 	
-	packet << sf::Int8(BOARD_DIMENSIONS) << sf::Int32(boardWidth) << sf::Int32(boardHeight);
-	this->_client.send(packet);
+	packet << sf::Int8(BOARD_INFO)
+		<< sf::Int32(board.getWidth())
+		<< sf::Int32(board.getHeight());
+	this->_socket.send(packet);
+
+	printf("Server::sendBoardInfo() FINISH \n");
 }
+
+void			Server::sendSnakeSpawnInfo(int playerID, Snake & snake)
+{
+	printf("Server::sendSnakeSpawnInfo()\n");
+
+	sf::Packet	packet;
+	SnakeCell &	snakeHeadCell = snake.getHeadCell();
+
+	packet << sf::Int8(SNAKE_SPAWNED)
+		<< sf::Int8(playerID)
+		<< sf::Int32(snakeHeadCell.getX())
+		<< sf::Int32(snakeHeadCell.getY())
+		<< sf::Int8(snakeHeadCell.getDirection());
+	this->_socket.send(packet);
+
+	printf("Server::sendSnakeSpawnInfo(): id=%d, posX=%d, posY=%d, direction=%d\n",
+		playerID, snakeHeadCell.getX(), snakeHeadCell.getX(), snakeHeadCell.getDirection());
+}
+
+

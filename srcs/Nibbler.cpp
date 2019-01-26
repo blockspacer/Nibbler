@@ -30,8 +30,7 @@ SnakeCell &		Nibbler::getPlayer1SnakeHeadCell(void) const
 
 /* Local Game Constructor */
 Nibbler::Nibbler(int boardWidth, int boardHeight, int numPlayers) :
-	_numPlayers(numPlayers), _exitProgram(false),  _isRoundOver(false), _roundNumber(0),
-	_isOnline(false), _isServer(false)
+	_numPlayers(numPlayers), _exitProgram(false),  _isRoundOver(false), _roundNumber(0)
 {
 	printf("Nibbler() local constructor\n");
 
@@ -52,8 +51,7 @@ Nibbler::Nibbler(int boardWidth, int boardHeight, int numPlayers) :
 
 /* Online 2P Server Constructor */
 Nibbler::Nibbler(int boardWidth, int boardHeight, unsigned short port) :
-	_numPlayers(2), _exitProgram(false), _isRoundOver(false), _roundNumber(0),
-	_isOnline(true), _isServer(true)
+	_numPlayers(2), _exitProgram(false), _isRoundOver(false), _roundNumber(0)
 {
 	printf("Nibbler() server constructor\n");
 
@@ -61,46 +59,44 @@ Nibbler::Nibbler(int boardWidth, int boardHeight, unsigned short port) :
 
 	this->_validateArgs(boardWidth, boardHeight, 2);
 
-	this->_server = new Server(port);
+	this->_server = new Server(*this, port);
 	this->_client = nullptr;
 
-	this->_server->sendBoardDimensions(boardWidth, boardHeight);
-
 	this->_board = new Board(boardWidth, boardHeight);
+	this->_server->sendBoardInfo(*this->_board);
+
+
 	this->_snakes.resize(2);
 
-	for (int i = 0; i < N_MODULES; i++)
-		this->_modules[i] = nullptr;
+	this->startNewRound();
 
+	this->_initModules();
+	this->_loop();
 
 	
 }
 
 /* Online 2P Client Constructor */
 Nibbler::Nibbler(std::string & ipAddress, int port) :
-	_numPlayers(2), _exitProgram(false), _isRoundOver(false), _roundNumber(0),
-	_isOnline(false), _isServer(false)
+	_numPlayers(2), _exitProgram(false), _isRoundOver(false), _roundNumber(0)
 {
 	printf("Nibbler() client constructor\n");
 
 	std::srand(std::time(0));
 
 	this->_server = nullptr;
-	this->_client = new Client(ipAddress, port);
+	this->_client = new Client(*this, ipAddress, port);
 
 	int boardWidth, boardHeight;
-	this->_client->getBoardDimensions(boardWidth, boardHeight);
-	printf("Okay got your boardWidth = %d, boardHeight = %d\n", boardWidth, boardHeight);
+	this->_client->receiveBoardInfo(boardWidth, boardHeight);
 	this->_board = new Board(boardWidth, boardHeight);
+
 	this->_snakes.resize(2);
 
-	this->_board = nullptr;
-	for (int i = 0; i < N_MODULES; i++)
-		this->_modules[i] = nullptr;
+	this->startNewRound();
 
-
-
-
+	this->_initModules();
+	this->_loop();
 	
 }
 
@@ -134,8 +130,6 @@ void		Nibbler::_initModules(void)
 	this->_modules[1] = new SDLModule(*this, *this->_board);
 	this->_modules[1]->disable();
 
-	// this->_modules[2] = new OpenGLModule(*this, *this->_board);
-	// this->_modules[2] = new OpenGLModule2(*this, *this->_board);
 	this->_modules[2] = new OpenGLModule(*this, *this->_board);
 	this->_modules[2]->disable();
 
@@ -150,14 +144,46 @@ void		Nibbler::startNewRound(void)
 	this->_board->clearAllCells();
 	this->_enemies.clear();
 
-	for (int i = 0; i < this->_numPlayers; i++)
+	// spawn snakes as server or local game
+	if (this->_client == nullptr)
 	{
-		if (this->_numPlayers == 1)
-			this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor1PGame(i));
-		else
-			this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor2PGame(i));	
+		for (int i = 0; i < this->_numPlayers; i++)
+		{
+			if (this->_numPlayers == 1)
+				this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor1PGame(i));
+			else
+				this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor2PGame(i));
+		}
 	}
-	this->_board->generateFood();
+
+	// server sends snake spawn info
+	if (this->_server != nullptr)
+	{
+		printf("Nibbler server startNewRound()\n");
+
+		this->_server->sendSnakeSpawnInfo(0, *this->_snakes[0]);
+		this->_server->sendSnakeSpawnInfo(1, *this->_snakes[1]);
+	}
+
+	// client receives snake spawn info
+	if (this->_client != nullptr)
+	{
+		int			playerIndex;
+		int			posX;
+		int			posY;
+		e_direction	direction;
+
+		printf("Nibbler client startNewRound()\n");
+
+		this->_client->receiveSnakeSpawnInfo(playerIndex, posX, posY, direction);
+		this->_snakes[0] = std::unique_ptr<Snake>(new Snake(this->_players[playerIndex], *this->_board, posX, posY, direction));
+
+		this->_client->receiveSnakeSpawnInfo(playerIndex, posX, posY, direction);
+		this->_snakes[1] = std::unique_ptr<Snake>(new Snake(this->_players[playerIndex], *this->_board, posX, posY, direction));
+	}
+
+	
+	// this->_board->generateFood();
 	AudioManager::getInstance().playBGM();
 }
 
@@ -395,15 +421,9 @@ void		Nibbler::terminate(void)
 
 void		Nibbler::selectNextModule(void)
 {
-	// printf("BEFORE disable()\n");
 	this->_modules[this->_moduleIndex]->disable();
-	// printf("AFTER disable()\n");
-
 	this->_moduleIndex = (this->_moduleIndex + 1) % N_MODULES;
-
-	// printf("BEFORE enable()\n");
 	this->_modules[this->_moduleIndex]->enable();
-	// printf("AFTER enable()\n\n");
 }
 
 void		Nibbler::debugBoard(void)
@@ -418,24 +438,38 @@ void		Nibbler::debugSnake(void)
 
 void		Nibbler::turnLeftP1(void)
 {
-	this->_snakes[0]->turnLeft();
+	if (this->_client == nullptr)
+		this->_snakes[0]->turnLeft();
+
+	if (this->_server != nullptr)
+		this->_server->sendMessage(P1_TURN_LEFT);
 }
 
 void		Nibbler::turnRightP1(void)
 {
-	this->_snakes[0]->turnRight();
+	if (this->_client == nullptr)
+		this->_snakes[0]->turnRight();
+
+	if (this->_server != nullptr)
+		this->_server->sendMessage(P1_TURN_RIGHT);
 }
 
 void		Nibbler::turnLeftP2(void)
 {
-	if (this->_numPlayers == 2)
+	if (this->_numPlayers == 2 && this->_server == nullptr)
 		this->_snakes[1]->turnLeft();
+
+	if (this->_client != nullptr)
+		this->_client->sendMessage(P2_TURN_LEFT);
 }
 
 void		Nibbler::turnRightP2(void)
 {
-	if (this->_numPlayers == 2)
+	if (this->_numPlayers == 2 && this->_server == nullptr)
 		this->_snakes[1]->turnRight();
+
+	if (this->_client != nullptr)
+		this->_client->sendMessage(P2_TURN_RIGHT);
 }
 
 void		Nibbler::selectModule1(void)
@@ -460,7 +494,6 @@ void		Nibbler::_toggleModules(int nextIndex)
 		for (int i = 0; i < N_MODULES; i++)
 			this->_modules[i]->disable();
 
-		// this->_modules[this->_moduleIndex]->disable();
 		this->_moduleIndex = nextIndex;
 		this->_modules[this->_moduleIndex]->enable();
 	}

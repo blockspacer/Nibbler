@@ -1,21 +1,25 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include <SFML/Network.hpp>
+# include "ANetworkEntity.hpp"
 
-class Server
+class Nibbler;
+class Board;
+class Snake;
+
+class Server : public ANetworkEntity
 {
 public:
 	
-	Server(unsigned short port);
+	Server(Nibbler & nibbler, unsigned short port);
 	~Server(void);
 
-	void				sendBoardDimensions(int boardWidth, int boardHeight);
+	void				sendBoardInfo(Board & board);
+	void				sendSnakeSpawnInfo(int playerID, Snake & snake);
 
 private:
 
 	sf::TcpListener		_listener;
-	sf::TcpSocket		_client;
 
 	Server(void);
 	Server(const Server & src);

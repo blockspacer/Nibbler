@@ -1,21 +1,22 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include <string>
-# include <SFML/Network.hpp>
+# include "ANetworkEntity.hpp"
+# include "direction.hpp"
 
-class Client
+class Nibbler;
+
+class Client : public ANetworkEntity
 {
 public:
 
-	Client(std::string & ipAddress, unsigned short port);
+	Client(Nibbler & nibbler, std::string & ipAddress, unsigned short port);
 	~Client(void);
 
-	void			getBoardDimensions(int & boardWidth, int & boardHeight);
+	void			receiveBoardInfo(int & boardWidth, int & boardHeight);
+	void			receiveSnakeSpawnInfo(int & playerID, int & posX, int & posY, e_direction & direction);
 
 private:
-
-	sf::TcpSocket	_socket;
 
 	Client(void);
 	Client(const Client & src);
