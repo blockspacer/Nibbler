@@ -31,7 +31,7 @@ class OpenGLModule : public IModule
 {
 public:
 
-	OpenGLModule(Nibbler & nibbler, Board & board);
+	OpenGLModule(Board & board, std::string title);
 	~OpenGLModule(void);
 
 	virtual void			disable(void);
@@ -42,7 +42,6 @@ public:
 
 private:
 
-	Nibbler &				_nibbler;
 	Board &					_board;
 
 	SDL_Window *			_window;
@@ -74,7 +73,7 @@ private:
 	OpenGLModule(const OpenGLModule & src);
 	OpenGLModule & operator=(const OpenGLModule & rhs);
 
-	void					_initOpenGLStuff(void);
+	void					_initOpenGLStuff(std::string & title);
 	void					_initModels(void);
 	void					_initLightPosition(void);
 

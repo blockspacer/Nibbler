@@ -19,15 +19,16 @@ public:
 
 protected:
 
-	Nibbler &		_nibbler;
 	sf::TcpSocket	_socket;
 
-	ANetworkEntity(Nibbler & nibbler);
+	ANetworkEntity(void);
 
 private:
 
 	ANetworkEntity(const ANetworkEntity & src);
 	ANetworkEntity &	operator=(const ANetworkEntity & rhs);
+
+	void			_handleSnakeSpawnInfo(sf::Packet & packet);
 
 };
 

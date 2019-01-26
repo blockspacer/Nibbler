@@ -3,7 +3,6 @@
 
 # include "ANetworkEntity.hpp"
 
-class Nibbler;
 class Board;
 class Snake;
 
@@ -11,7 +10,7 @@ class Server : public ANetworkEntity
 {
 public:
 	
-	Server(Nibbler & nibbler, unsigned short port);
+	Server(unsigned short port);
 	~Server(void);
 
 	void				sendBoardInfo(Board & board);

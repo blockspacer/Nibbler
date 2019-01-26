@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-Server::Server(Nibbler & nibbler, unsigned short port) : ANetworkEntity(nibbler)
+Server::Server(unsigned short port) : ANetworkEntity()
 {
 	if (this->_listener.listen(port) != sf::Socket::Done)
 		throw NibblerException("sf::TcpListener::listen() failed");
@@ -21,7 +21,6 @@ Server::Server(Nibbler & nibbler, unsigned short port) : ANetworkEntity(nibbler)
 	std::cout << "[Server] Connection successful!" << std::endl;
 
 	this->_listener.close();
-
 	this->_socket.setBlocking(false);
 }
 
@@ -39,8 +38,6 @@ void			Server::sendBoardInfo(Board & board)
 		<< sf::Int32(board.getWidth())
 		<< sf::Int32(board.getHeight());
 	this->_socket.send(packet);
-
-	printf("Server::sendBoardInfo() FINISH \n");
 }
 
 void			Server::sendSnakeSpawnInfo(int playerID, Snake & snake)

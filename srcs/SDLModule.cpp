@@ -11,13 +11,14 @@
 
 # define CELL_WIDTH			24
 
-SDLModule::SDLModule(Nibbler & nibbler, Board & board) :
-	_nibbler(nibbler), _board(board), _isGridShown(false)
+SDLModule::SDLModule(Board & board, std::string title) : _board(board), _isGridShown(false)
 {
+	// this->_board = Nibbler::getInstance().getBoard();
+
 	if (SDL_Init(SDL_INIT_EVERYTHING))
 		throw NibblerException("SDL_Init() failed");
 
-	if (!(this->_window = SDL_CreateWindow("SDL", 0, 0, board.getWidth() * CELL_WIDTH, board.getHeight() * CELL_WIDTH, SDL_WINDOW_SHOWN)))
+	if (!(this->_window = SDL_CreateWindow(title.c_str(), 0, 0, this->_board.getWidth() * CELL_WIDTH, this->_board.getHeight() * CELL_WIDTH, SDL_WINDOW_SHOWN)))
 		throw NibblerException("SDL_CreateWindow() failed");
 	this->_context = SDL_GL_CreateContext(this->_window);
 
@@ -99,7 +100,7 @@ void			SDLModule::handleEvents(void)
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 		else if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			this->_handleKeyPressEvent(event);
 	}
@@ -111,35 +112,32 @@ void		SDLModule::_handleKeyPressEvent(SDL_Event & event)
 	{
 		// Gameplay Controls
 		case SDLK_ESCAPE:
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 			return;
 		case SDLK_LEFT:
-			this->_nibbler.turnLeftP1();
+			Nibbler::getInstance().turnLeftP1();
 			break;
 		case SDLK_RIGHT:
-			this->_nibbler.turnRightP1();
+			Nibbler::getInstance().turnRightP1();
 			break;
 		case SDLK_KP_4:
-			this->_nibbler.turnLeftP2();
+			Nibbler::getInstance().turnLeftP2();
 			break;
 		case SDLK_KP_6:
-			this->_nibbler.turnRightP2();
+			Nibbler::getInstance().turnRightP2();
 			break;
 		case SDLK_r:
-			this->_nibbler.startNewRound();
+			Nibbler::getInstance().startNewRound();
 			break;
 		// Graphics Controls
 		case SDLK_1:
-			// printf("SDLModule: pressed 1\n");
-			this->_nibbler.selectModule1();
+			Nibbler::getInstance().selectModule1();
 			return;
 		case SDLK_2:
-			// printf("SDLModule: pressed 2\n");
-			this->_nibbler.selectModule2();
+			Nibbler::getInstance().selectModule2();
 			return;
 		case SDLK_3:
-			// printf("SDLModule: pressed 3\n");
-			this->_nibbler.selectModule3();
+			Nibbler::getInstance().selectModule3();
 			return;
 		case SDLK_g:
 			this->_toggleGrid();
@@ -148,24 +146,24 @@ void		SDLModule::_handleKeyPressEvent(SDL_Event & event)
 
 		// DEBUG
 
-		case SDLK_TAB:
-			printf("SDL Module: Pressed TAB\n");
-			this->_nibbler.selectNextModule();
-			return;
+		// case SDLK_TAB:
+		// 	printf("SDL Module: Pressed TAB\n");
+		// 	Nibbler::getInstance().selectNextModule();
+		// 	return;
 
 		case SDLK_d:
 			printf("SDL Module: Pressed D\n");
 			break;
 
 		case SDLK_SPACE:
-			this->_nibbler._update();
+			Nibbler::getInstance()._update();
 			break;
 		
 		// case SDLK_b:					// TEMPORARY TESTING
-		// 	this->_nibbler.debugBoard();
+		// 	Nibbler::getInstance().debugBoard();
 		// 	break;
 		// case SDLK_s:					// TEMPORARY TESTING
-		// 	this->_nibbler.debugSnake();
+		// 	Nibbler::getInstance().debugSnake();
 		// 	break;
 
 		default:

@@ -12,17 +12,16 @@
 #include "Shader.hpp"
 #include <iostream>
 
-OpenGLModule::OpenGLModule(Nibbler & nibbler, Board & board) :
-	_nibbler(nibbler), _board(board)
+OpenGLModule::OpenGLModule(Board & board, std::string title) : _board(board)
 {
-	this->_initOpenGLStuff();
+	this->_initOpenGLStuff(title);
 	this->_shader = new Shader();
 	this->_initModels();
 	this->_initLightPosition();
 	this->_resetGraphicsParameters();
 }
 
-void			OpenGLModule::_initOpenGLStuff(void)
+void			OpenGLModule::_initOpenGLStuff(std::string & title)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING))
 		throw NibblerException("SDL_Init() failed");
@@ -34,7 +33,7 @@ void			OpenGLModule::_initOpenGLStuff(void)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetSwapInterval(1);
 
-	if (!(this->_window = SDL_CreateWindow("OpenGL", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL)))
+	if (!(this->_window = SDL_CreateWindow(title.c_str(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL)))
 		throw NibblerException("SDL_CreateWindow() failed");
 	this->_context = SDL_GL_CreateContext(this->_window);
 
@@ -158,7 +157,7 @@ void			OpenGLModule::handleEvents(void)
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 		else if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			this->_handleKeyPressEvent(event);
 	}
@@ -174,17 +173,17 @@ void			OpenGLModule::handleEvents(void)
 // 	// if (keyState[SDL_SCANCODE_1])
 // 	// {
 // 	// 	printf("OpenGLModule: pressed 1\n");
-// 	// 	this->_nibbler.selectModule1();	
+// 	// 	Nibbler::getInstance().selectModule1();	
 // 	// }
 // 	// else if (keyState[SDL_SCANCODE_2])
 // 	// {
 // 	// 	printf("OpenGLModule: pressed 2\n");
-// 	// 	this->_nibbler.selectModule2();
+// 	// 	Nibbler::getInstance().selectModule2();
 // 	// }
 // 	// else if (keyState[SDL_SCANCODE_3])
 // 	// {
 // 	// 	printf("OpenGLModule: pressed 3\n");
-// 	// 	this->_nibbler.selectModule3();
+// 	// 	Nibbler::getInstance().selectModule3();
 // 	// }
 
 // 	if (keyState[SDL_SCANCODE_LSHIFT])
@@ -255,35 +254,32 @@ void			OpenGLModule::_handleKeyPressEvent(SDL_Event & event)
 	{
 		// Gameplay Controls
 		case SDLK_ESCAPE:
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 			return;
 		case SDLK_LEFT:
-			this->_nibbler.turnLeftP1();
+			Nibbler::getInstance().turnLeftP1();
 			break;
 		case SDLK_RIGHT:
-			this->_nibbler.turnRightP1();
+			Nibbler::getInstance().turnRightP1();
 			break;
 		case SDLK_KP_4:
-			this->_nibbler.turnLeftP2();
+			Nibbler::getInstance().turnLeftP2();
 			break;
 		case SDLK_KP_6:
-			this->_nibbler.turnRightP2();
+			Nibbler::getInstance().turnRightP2();
 			break;
 		case SDLK_r:
-			this->_nibbler.startNewRound();
+			Nibbler::getInstance().startNewRound();
 			break;
 		// Graphics Controls
 		case SDLK_1:
-			// printf("OpenGLModule: pressed 1\n");
-			this->_nibbler.selectModule1();
+			Nibbler::getInstance().selectModule1();
 			return;
 		case SDLK_2:
-			// printf("OpenGLModule: pressed 2\n");
-			this->_nibbler.selectModule2();
+			Nibbler::getInstance().selectModule2();
 			return;
 		case SDLK_3:
-			// printf("OpenGLModule: pressed 3\n");
-			this->_nibbler.selectModule3();
+			Nibbler::getInstance().selectModule3();
 			return;
 		case SDLK_KP_0:
 			this->_resetGraphicsParameters();
@@ -301,24 +297,24 @@ void			OpenGLModule::_handleKeyPressEvent(SDL_Event & event)
 
 		// DEBUG
 
-		case SDLK_TAB:
-			printf("OpenGLModule: Pressed TAB\n");
-			this->_nibbler.selectNextModule();
-			return;
+		// case SDLK_TAB:
+		// 	printf("OpenGLModule: Pressed TAB\n");
+		// 	Nibbler::getInstance().selectNextModule();
+		// 	return;
 
 		case SDLK_d:
 			printf("OpenGLModule Module: Pressed D\n");
 			break;
 
 		case SDLK_SPACE:
-			this->_nibbler._update();
+			Nibbler::getInstance()._update();
 			break;
 		
 		// case SDLK_b:					// TEMPORARY TESTING
-		// 	this->_nibbler.debugBoard();
+		// 	Nibbler::getInstance().debugBoard();
 		// 	break;
 		// case SDLK_s:					// TEMPORARY TESTING
-		// 	this->_nibbler.debugSnake();
+		// 	Nibbler::getInstance().debugSnake();
 		// 	break;
 
 		default:
@@ -419,7 +415,7 @@ void				OpenGLModule::_updateViewMatrix(void)
 	// lock on player 1's view point
 	if (this->_isFirstPersonView)
 	{
-		SnakeCell &	headCell = this->_nibbler.getPlayer1SnakeHeadCell();
+		SnakeCell &	headCell = Nibbler::getInstance().getActivePlayersSnakeHeadCell();
 		int			x = headCell.getX();
 		int			y = headCell.getY();
 		int			offset = 4;

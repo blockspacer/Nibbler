@@ -7,8 +7,7 @@
 #include "FoodCell.hpp"
 #include "EnemyCell.hpp"
 
-SFMLModule::SFMLModule(Nibbler & nibbler, Board & board) :
-	_nibbler(nibbler), _board(board)
+SFMLModule::SFMLModule(Board & board, std::string title) : _board(board), _title(title)
 {
 	this->enable();
 }
@@ -28,7 +27,7 @@ void			SFMLModule::disable(void)
 void			SFMLModule::enable(void)
 {
 	// printf("SFMLModule: enable()\n");
-	this->_renderWindow.create(sf::VideoMode(this->_board.getWidth() * CELL_WIDTH, this->_board.getHeight() * CELL_WIDTH), "SFML");
+	this->_renderWindow.create(sf::VideoMode(this->_board.getWidth() * CELL_WIDTH, this->_board.getHeight() * CELL_WIDTH), this->_title);
 	this->_renderWindow.setPosition(sf::Vector2i(0, 0));
 	this->_renderWindow.setKeyRepeatEnabled(false);
 }
@@ -40,7 +39,7 @@ void			SFMLModule::handleEvents(void)
 	while (this->_renderWindow.pollEvent(event))
 	{
 		if (event.type == sf::Event::EventType::Closed)
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 		else if (event.type == sf::Event::EventType::KeyPressed)
 			this->_handleKeyPressEvent(event);
 	}
@@ -52,48 +51,45 @@ void			SFMLModule::_handleKeyPressEvent(sf::Event & event)
 	{
 		// Gameplay Controls
 		case sf::Keyboard::Escape:
-			this->_nibbler.terminate();
+			Nibbler::getInstance().terminate();
 			break;
 		case sf::Keyboard::Left:
-			this->_nibbler.turnLeftP1();
+			Nibbler::getInstance().turnLeftP1();
 			break;
 		case sf::Keyboard::Right:
-			this->_nibbler.turnRightP1();
+			Nibbler::getInstance().turnRightP1();
 			break;
 		case sf::Keyboard::Numpad4:
-			this->_nibbler.turnLeftP2();
+			Nibbler::getInstance().turnLeftP2();
 			break;
 		case sf::Keyboard::Numpad6:
-			this->_nibbler.turnRightP2();
+			Nibbler::getInstance().turnRightP2();
 			break;
 		case sf::Keyboard::R:
-			this->_nibbler.startNewRound();
+			Nibbler::getInstance().startNewRound();
 			break;
 		// Graphics Controls
 		case sf::Keyboard::Num1:
-			// printf("SFMLModule: pressed 1\n");
-			this->_nibbler.selectModule1();
+			Nibbler::getInstance().selectModule1();
 			break;
 		case sf::Keyboard::Num2:
-			// printf("SFMLModule: pressed 2\n");
-			this->_nibbler.selectModule2();
+			Nibbler::getInstance().selectModule2();
 			break;
 		case sf::Keyboard::Num3:
-			// printf("SFMLModule: pressed 3\n");
-			this->_nibbler.selectModule3();
+			Nibbler::getInstance().selectModule3();
 			break;
 
 
 
 		// DEBUG
 
-		case sf::Keyboard::Tab:
-			printf("SFML Module: Pressed TAB\n");
-			this->_nibbler.selectNextModule();
-			break;
+		// case sf::Keyboard::Tab:
+		// 	printf("SFML Module: Pressed TAB\n");
+		// 	Nibbler::getInstance().selectNextModule();
+		// 	break;
 
 		case sf::Keyboard::Space:
-			this->_nibbler._update();
+			Nibbler::getInstance()._update();
 			break;
 
 		case sf::Keyboard::D:

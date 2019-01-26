@@ -62,12 +62,15 @@ void				startGame(t_options & options)
 	if (options.isOnline)
 	{
 		if (options.isServer)
-			Nibbler nibbler(options.boardWidth, options.boardHeight, options.port);
+			Nibbler::createOnlineGameAsServer(options.boardWidth, options.boardHeight, options.port);
+			// Nibbler nibbler(options.boardWidth, options.boardHeight, options.port);
 		else
-			Nibbler nibbler(options.ipAddress, options.port);
+			Nibbler::createOnlineGameAsClient(options.ipAddress, options.port);
+			// Nibbler nibbler(options.ipAddress, options.port);
 	}
 	else
-		Nibbler nibbler(options.boardWidth, options.boardHeight, options.numPlayers);
+		Nibbler::createLocalGame(options.boardWidth, options.boardHeight, options.numPlayers);
+		// Nibbler nibbler(options.boardWidth, options.boardHeight, options.numPlayers);
 }
 
 void				terminateWithUsageError(void)
@@ -81,12 +84,11 @@ void				terminateWithUsageError(void)
 
 
 /*
-Examples:
-	0		1		2			3				4
+	0			1			2			3			4
 
-	Nibbler	-l		numPlayers	boardWidth		boardHeight		// local game
-	Nibbler	-s		port		boardWidth		boardHeight		// online game as server
-	Nibbler	-c		IP			port							// online game as client
+	Nibbler		-l			numPlayers	boardWidth	boardHeight		// local game
+	Nibbler		-s			port		boardWidth	boardHeight		// online game as server
+	Nibbler		-c			IP			port						// online game as client
 */
 
 t_options			parseOptions(int argc, char * argv[])
@@ -150,7 +152,7 @@ int					main(int argc, char * argv[])
 		std::cout << "bad_alloc exception: " << exception.what() << std::endl;
 	}
 
-	// printf("CHECK LEAKS MOTHERFUCKER\n");
+	// printf("CHECK LEAKS MOTHERFUCKER \n");
 	// while (true)
 	// 	;
 

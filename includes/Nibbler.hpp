@@ -2,6 +2,8 @@
 # define NIBBLER_HPP
 
 # include "Player.hpp"
+# include "direction.hpp"
+
 # include <string>
 # include <iostream>
 # include <vector>
@@ -26,88 +28,94 @@ class Nibbler
 {
 public:
 
-	Nibbler(int boardWidth, int boardHeight, int numPlayers);		// local game constructor
-	Nibbler(int boardWidth, int boardHeight, unsigned short port);	// online server constructor
-	Nibbler(std::string & ipAddress, int port);						// online client constructor
-	
+	static void			createLocalGame(int boardWidth, int boardHeight, int numPlayers);
+	static void			createOnlineGameAsServer(int boardWidth, int boardHeight, unsigned short port);
+	static void			createOnlineGameAsClient(std::string & ipAddress, unsigned short port);
+
+	static Nibbler &	getInstance(void);
+
 	~Nibbler(void);
 
-	void			terminate(void);
-	void			selectNextModule(void);		// maybe get rid of this
+	Board &				getBoard(void) const;
 
-	void			selectModule1(void);
-	void			selectModule2(void);
-	void			selectModule3(void);
+	void				terminate(bool fromOnlineMessage=false);
+
+	void				selectModule1(bool fromOnlineMessage=false);
+	void				selectModule2(bool fromOnlineMessage=false);
+	void				selectModule3(bool fromOnlineMessage=false);
+
+	void				turnLeftP1(bool fromOnlineMessage=false);
+	void				turnRightP1(bool fromOnlineMessage=false);
+	void				turnLeftP2(bool fromOnlineMessage=false);
+	void				turnRightP2(bool fromOnlineMessage=false);
+
+	void				startNewRound(bool fromOnlineMessage=false);
+
+	void				generateFood(void);
 
 
-	void			debugBoard(void);
-	void			debugSnake(void);
-
-	void			turnLeftP1(void);
-	void			turnRightP1(void);
-
-	void			turnLeftP2(void);
-	void			turnRightP2(void);
-
-	void			turnLeftP1_Online(void);
-	void			turnRightP1_Online(void);
-
-	void			turnLeftP2_Online(void);
-	void			turnRightP2_Online(void);
+	void				spawnNewSnake(int playerID, int posX, int posY, e_direction direction);
 
 
 
-	void			startNewRound(void);
-
-	SnakeCell &		getPlayer1SnakeHeadCell(void) const;
+	SnakeCell &			getActivePlayersSnakeHeadCell(void) const;
 
 
-	void			_update(void);			// move back to private later
+	void				_update(void);			// move back to private later
+
+	void				debugBoard(void);
+	void				debugSnake(void);
 
 private:
 
-	int				_numPlayers;
+	static Nibbler *	_instance;
 
-	bool			_exitProgram;
-	bool			_isRoundOver;
-	int				_roundNumber;
-	std::string		_winner;
+	int					_numPlayers;
 
-	Board *			_board;
+	bool				_exitProgram;
+	bool				_isRoundOver;
+	int					_roundNumber;
+	std::string			_winner;
 
-	IModule *		_modules[N_MODULES];
-	int				_moduleIndex;
+	Board *				_board;
 
-	Player								_players[MAX_PLAYERS];
-	std::vector<std::unique_ptr<Snake>>	_snakes;
-	std::vector<std::shared_ptr<Enemy>>	_enemies;
+	IModule *			_modules[N_MODULES];
+	int					_moduleIndex;
 
-	Server *		_server;
-	Client *		_client;
+	Player									_players[MAX_PLAYERS];
+	std::vector<std::unique_ptr<Snake>>		_snakes;
+	std::vector<std::shared_ptr<Enemy>>		_enemies;
+
+	Server *			_server;
+	Client *			_client;
+
+	Nibbler(int boardWidth, int boardHeight, int numPlayers);			// local game constructor
+	Nibbler(int boardWidth, int boardHeight, unsigned short port);		// online server constructor
+	Nibbler(std::string & ipAddress, unsigned short port);							// online client constructor
 
 	Nibbler(void);
 	Nibbler(const Nibbler & src);
 	Nibbler & operator=(const Nibbler & rhs);
 
-	void			_validateArgs(int boardWidth, int boardHeight, int numPlayers);
+	void				_validateArgs(int boardWidth, int boardHeight, int numPlayers);
 
-	void			_initModules(void);
-	void			_toggleModules(int nextIndex);
+	void				_initModules(void);
+	void				_toggleModules(int nextIndex);
 
-	Snake *			_initSnakeFor1PGame(int playerIndex);
-	Snake *			_initSnakeFor2PGame(int playerIndex);
+	Snake *				_initSnakeFor1PGame(int playerIndex);
+	Snake *				_initSnakeFor2PGame(int playerIndex);
+	
+	void				_startNewRound(void);
 
+	void				_loop(void);
+	void				_handleEvents(void);
+	// void				_update(void);
+	void				_render(void);
+	void				_displayGameStatus(void);
 
+	void				_spawnEnemies(void);
 
-	void			_loop(void);
-	void			_handleEvents(void);
-	// void			_update(void);
-	void			_render(void);
-	void			_displayGameStatus(void);
-
-	void			_spawnEnemies(void);
-
-	void			_checkIfRoundIsOver(void);
+	void				_checkIfRoundIsOver(void);
 
 
 
