@@ -246,6 +246,12 @@ void		Nibbler::_loop(void)
 
 		this->_handleEvents();
 
+		if (this->_client != nullptr)
+			this->_client->receiveMessages();
+		if (this->_server != nullptr)
+			this->_server->receiveMessages();
+
+
 		if (t >= MS_PER_UPDATE)
 		{
 			this->_update();
