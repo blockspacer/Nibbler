@@ -1,9 +1,11 @@
 #include "ANetworkEntity.hpp"
 #include "Nibbler.hpp"
 
+#include <iostream>
+
 ANetworkEntity::ANetworkEntity(Nibbler & nibbler) : _nibbler(nibbler)
 {
-	
+
 }
 
 ANetworkEntity::~ANetworkEntity(void) { }
@@ -14,6 +16,8 @@ void			ANetworkEntity::sendMessage(e_message message)
 	
 	packet << sf::Int8(message);
 	this->_socket.send(packet);
+
+	std::cout << "sendMessage(): " << message << std::endl;
 }
 
 void			ANetworkEntity::receiveMessages(void)
@@ -67,18 +71,24 @@ void			ANetworkEntity::receiveMessages(void)
 
 		message = static_cast<e_message>(message_);
 
+		std::cout << "receiveMessages(): " << message << std::endl;
+
 		switch (message)
 		{
 			case P1_TURN_LEFT:
+				std::cout << "receiveMessage(): P1_TURN_LEFT" << std::endl;
 				this->_nibbler.turnLeftP1();
 				break;
 			case P1_TURN_RIGHT:
+				std::cout << "receiveMessage(): P1_TURN_RIGHT" << std::endl;
 				this->_nibbler.turnRightP1();
 				break;
 			case P2_TURN_LEFT:
+				std::cout << "receiveMessage(): P2_TURN_LEFT" << std::endl;
 				this->_nibbler.turnLeftP2();
 				break;
 			case P2_TURN_RIGHT:
+				std::cout << "receiveMessage(): P2_TURN_RIGHT" << std::endl;
 				this->_nibbler.turnRightP2();
 				break;
 			default:
