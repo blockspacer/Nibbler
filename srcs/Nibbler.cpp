@@ -442,6 +442,26 @@ void		Nibbler::debugSnake(void)
 	this->_snakes[0]->debug();
 }
 
+void		Nibbler::turnLeftP1_Online(void)
+{
+	this->_snakes[0]->turnLeft();
+}
+
+void		Nibbler::turnRightP1_Online(void)
+{
+	this->_snakes[0]->turnRight();
+}
+
+void		Nibbler::turnLeftP2_Online(void)
+{
+	this->_snakes[1]->turnLeft();
+}
+
+void		Nibbler::turnRightP2_Online(void)
+{
+	this->_snakes[1]->turnRight();
+}
+
 void		Nibbler::turnLeftP1(void)
 {
 	if (this->_client == nullptr)

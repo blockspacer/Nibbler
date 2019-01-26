@@ -49,6 +49,14 @@ public:
 	void			turnLeftP2(void);
 	void			turnRightP2(void);
 
+	void			turnLeftP1_Online(void);
+	void			turnRightP1_Online(void);
+
+	void			turnLeftP2_Online(void);
+	void			turnRightP2_Online(void);
+
+
+
 	void			startNewRound(void);
 
 	SnakeCell &		getPlayer1SnakeHeadCell(void) const;

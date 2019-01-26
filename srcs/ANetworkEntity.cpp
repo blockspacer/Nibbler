@@ -77,19 +77,19 @@ void			ANetworkEntity::receiveMessages(void)
 		{
 			case P1_TURN_LEFT:
 				std::cout << "receiveMessage(): P1_TURN_LEFT" << std::endl;
-				this->_nibbler.turnLeftP1();
+				this->_nibbler.turnLeftP1_Online();
 				break;
 			case P1_TURN_RIGHT:
 				std::cout << "receiveMessage(): P1_TURN_RIGHT" << std::endl;
-				this->_nibbler.turnRightP1();
+				this->_nibbler.turnRightP1_Online();
 				break;
 			case P2_TURN_LEFT:
 				std::cout << "receiveMessage(): P2_TURN_LEFT" << std::endl;
-				this->_nibbler.turnLeftP2();
+				this->_nibbler.turnLeftP2_Online();
 				break;
 			case P2_TURN_RIGHT:
 				std::cout << "receiveMessage(): P2_TURN_RIGHT" << std::endl;
-				this->_nibbler.turnRightP2();
+				this->_nibbler.turnRightP2_Online();
 				break;
 			default:
 				printf(" error 🤷 \n");
