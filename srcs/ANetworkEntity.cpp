@@ -3,7 +3,7 @@
 
 ANetworkEntity::ANetworkEntity(Nibbler & nibbler) : _nibbler(nibbler)
 {
-
+	
 }
 
 ANetworkEntity::~ANetworkEntity(void) { }

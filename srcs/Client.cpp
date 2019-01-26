@@ -12,6 +12,8 @@ Client::Client(Nibbler & nibbler, std::string & ipAddress, unsigned short port) 
 		throw NibblerException("sf::TcpSocket::connect() failed");
 
 	std::cout << "[Client] Connection successful!" << std::endl;
+
+	this->_socket.setBlocking(false);
 }
 
 Client::~Client(void)

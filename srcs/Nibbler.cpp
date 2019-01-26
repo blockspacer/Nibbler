@@ -287,7 +287,7 @@ void		Nibbler::_update(void)
 		std::remove_if(this->_enemies.begin(), this->_enemies.end(), [](std::shared_ptr<Enemy> & enemy){ return (enemy->isDead()); }),
 		this->_enemies.end());
 
-	this->_spawnEnemies();
+	// this->_spawnEnemies();
 
 	this->_checkIfRoundIsOver();
 }

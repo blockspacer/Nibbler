@@ -21,6 +21,8 @@ Server::Server(Nibbler & nibbler, unsigned short port) : ANetworkEntity(nibbler)
 	std::cout << "[Server] Connection successful!" << std::endl;
 
 	this->_listener.close();
+
+	this->_socket.setBlocking(false);
 }
 
 Server::~Server(void)
