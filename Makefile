@@ -52,27 +52,29 @@ HEADERS := -I $(INCLUDES) \
 	-I $(GLM_INC)
 
 SRCSDIR := srcs/
-SRCS := main.cpp \
-Nibbler.cpp \
+SRCS := \
+ANetworkEntity.cpp \
+AudioManager.cpp \
 Board.cpp \
 Cell.cpp \
-Snake.cpp \
-SDLModule.cpp \
-NibblerException.cpp \
-ResourceManager.cpp \
-SnakeCell.cpp \
-Player.cpp \
-FoodCell.cpp \
-AudioManager.cpp \
-SFMLModule.cpp \
+Client.cpp \
 Enemy.cpp \
 EnemyCell.cpp \
-Shader.cpp \
+FoodCell.cpp \
 Model.cpp \
+Nibbler.cpp \
+NibblerException.cpp \
 OpenGLModule.cpp \
+ParsingException.cpp \
+Player.cpp \
+ResourceManager.cpp \
+SDLModule.cpp \
+SFMLModule.cpp \
 Server.cpp \
-Client.cpp \
-ANetworkEntity.cpp
+Shader.cpp \
+Snake.cpp \
+SnakeCell.cpp \
+main.cpp
 
 OBJDIR := objs/
 OBJS := $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))

@@ -51,10 +51,13 @@ public:
 
 	void				startNewRound(bool fromOnlineMessage=false);
 
-	void				generateFood(void);
+	void				spawnFood(void);
+	void				spawnFood(int foodID, int posX, int posY);
 
 
-	void				spawnNewSnake(int playerID, int posX, int posY, e_direction direction);
+	void				spawnSnake(int playerID, int posX, int posY, e_direction direction);
+
+	void				spawnEnemy(int id, int posX, int posY, e_direction direction);
 
 
 
@@ -116,6 +119,9 @@ private:
 	void				_spawnEnemies(void);
 
 	void				_checkIfRoundIsOver(void);
+
+	
+	void				_spawnEnemy(int posX, int posY, e_direction direction);
 
 
 

@@ -5,8 +5,9 @@
 #include "Board.hpp"
 #include "Snake.hpp"
 #include "SnakeCell.hpp"
-
-#include <iostream>
+#include "FoodCell.hpp"
+#include "Enemy.hpp"
+#include "EnemyCell.hpp"
 
 Server::Server(unsigned short port) : ANetworkEntity()
 {
@@ -26,7 +27,7 @@ Server::Server(unsigned short port) : ANetworkEntity()
 
 Server::~Server(void)
 {
-	printf("~Server() \n");
+	// printf("~Server() \n");
 	this->_socket.disconnect();
 }
 
@@ -40,22 +41,114 @@ void			Server::sendBoardInfo(Board & board)
 	this->_socket.send(packet);
 }
 
-void			Server::sendSnakeSpawnInfo(int playerID, Snake & snake)
+void			Server::sendStartNewRoundInfo(Snake & snake0, Snake & snake1, FoodCell & foodCell, int bgmID)
 {
-	printf("Server::sendSnakeSpawnInfo()\n");
-
 	sf::Packet	packet;
-	SnakeCell &	snakeHeadCell = snake.getHeadCell();
+	SnakeCell &	snakeHeadCell0 = snake0.getHeadCell();
+	SnakeCell &	snakeHeadCell1 = snake1.getHeadCell();
 
-	packet << sf::Int8(SNAKE_SPAWNED)
-		<< sf::Int8(playerID)
-		<< sf::Int32(snakeHeadCell.getX())
-		<< sf::Int32(snakeHeadCell.getY())
-		<< sf::Int8(snakeHeadCell.getDirection());
+	packet << sf::Int8(START_NEW_ROUND)
+		// Player 1 snake info
+		<< sf::Int8(0)
+		<< sf::Int32(snakeHeadCell0.getX())
+		<< sf::Int32(snakeHeadCell0.getY())
+		<< sf::Int8(snakeHeadCell0.getDirection())
+		// Player 2 snake info
+		<< sf::Int8(1)
+		<< sf::Int32(snakeHeadCell1.getX())
+		<< sf::Int32(snakeHeadCell1.getY())
+		<< sf::Int8(snakeHeadCell1.getDirection())
+		// Food info
+		<< sf::Int32(foodCell.getID())
+		<< sf::Int32(foodCell.getX())
+		<< sf::Int32(foodCell.getY())
+		// BGM info
+		<< sf::Int8(bgmID);
 	this->_socket.send(packet);
 
-	printf("Server::sendSnakeSpawnInfo(): id=%d, posX=%d, posY=%d, direction=%d\n",
-		playerID, snakeHeadCell.getX(), snakeHeadCell.getX(), snakeHeadCell.getDirection());
+	// printf("Server::sendStartNewRoundInfo(): foodID = %d\n", foodCell.getID());
 }
+
+void			Server::sendFoodSpawnInfo(FoodCell & foodCell)
+{
+	sf::Packet	packet;
+
+	packet << sf::Int8(FOOD_SPAWNED)
+		<< sf::Int32(foodCell.getID())
+		<< sf::Int32(foodCell.getX())
+		<< sf::Int32(foodCell.getY());
+	this->_socket.send(packet);
+
+	// printf("Server::sendFoodSpawnInfo(): id = %d\n", foodCell.getID());
+}
+
+void			Server::sendEnemySpawnInfo(Enemy & enemy)
+{
+	sf::Packet	packet;
+	EnemyCell &	enemyCell = enemy.getEnemyCell();
+
+	packet << sf::Int8(ENEMY_SPAWNED)
+		<< sf::Int32(enemyCell.getID())
+		<< sf::Int32(enemyCell.getX())
+		<< sf::Int32(enemyCell.getY())
+		<< sf::Int8(enemyCell.getDirection());
+	this->_socket.send(packet);
+
+	printf("Server::sendEnemySpawnInfo(): id = %d\n", enemyCell.getID());
+}
+
+void			Server::receiveMessages(void)
+{
+	sf::Packet	packet;
+	sf::Socket::Status status;
+
+	sf::Int8	message_;
+	e_message	message;
+
+	while ((status = this->_socket.receive(packet)) == sf::Socket::Done)
+	{
+		if (!(packet >> message_))
+		{
+			std::cout << "Server::receiveMessages(): bad packet" << std::endl;
+			return;
+		}
+		message = static_cast<e_message>(message_);
+		switch (message)
+		{
+			case P2_TURN_LEFT:
+				Nibbler::getInstance().turnLeftP2(true);
+				break;
+			case P2_TURN_RIGHT:
+				Nibbler::getInstance().turnRightP2(true);
+				break;
+			case TERMINATE:
+				Nibbler::getInstance().terminate(true);
+				break;
+			default:
+				std::cout << "Server::receiveMessages(): dafuq is this 🤷" << std::endl;
+				break;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -5,6 +5,8 @@
 
 class Board;
 class Snake;
+class FoodCell;
+class Enemy;
 
 class Server : public ANetworkEntity
 {
@@ -14,7 +16,11 @@ public:
 	~Server(void);
 
 	void				sendBoardInfo(Board & board);
-	void				sendSnakeSpawnInfo(int playerID, Snake & snake);
+	void				sendStartNewRoundInfo(Snake & snake0, Snake & snake1, FoodCell & foodCell, int bgmID);
+	void				sendFoodSpawnInfo(FoodCell & foodCell);
+	void				sendEnemySpawnInfo(Enemy & enemy);
+
+	virtual void		receiveMessages(void);
 
 private:
 

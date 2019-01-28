@@ -13,10 +13,13 @@ AudioManager::AudioManager(void)
 {
 	if (SDL_Init(SDL_INIT_AUDIO))
 		throw NibblerException("SDL_Init() failed");
+	
 	if ((Mix_Init(MIX_FLAGS) & MIX_FLAGS) != MIX_FLAGS)
 		throw NibblerException("Mix_Init() failed");
+	
 	if (Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0)
 		throw NibblerException("Mix_OpenAudio() failed");
+
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 
 	this->_bgmClips.push_back(this->_loadBGM(BGM_00));
@@ -42,6 +45,16 @@ AudioManager::AudioManager(void)
 	this->_sfxClips["2p_all_lose"] = this->_loadSFX(_2P_ALL_LOSE_SFX);
 }
 
+AudioManager::~AudioManager(void)
+{
+	for (size_t i = 0; i < this->_bgmClips.size(); i++)
+		Mix_FreeMusic(this->_bgmClips[i]);
+	for (const auto & clip : this->_sfxClips)
+		Mix_FreeChunk(clip.second);
+	Mix_Quit();
+	SDL_Quit();
+}
+
 Mix_Music *		AudioManager::_loadBGM(std::string filename)
 {
 	Mix_Music *	clip = Mix_LoadMUS(ResourceManager::getInstance().getBasePath(filename).c_str());
@@ -60,19 +73,18 @@ Mix_Chunk *		AudioManager::_loadSFX(std::string filename)
 	return (clip);
 }
 
-AudioManager::~AudioManager(void)
+int				AudioManager::playBGM(void)
 {
-	for (size_t i = 0; i < this->_bgmClips.size(); i++)
-		Mix_FreeMusic(this->_bgmClips[i]);
-	for (const auto & clip : this->_sfxClips)
-		Mix_FreeChunk(clip.second);
-	Mix_Quit();
-	SDL_Quit();
+	int			index = std::rand() % this->_bgmClips.size();
+	Mix_Music *	clip = this->_bgmClips[index];
+
+	Mix_PlayMusic(clip, -1);		// loop forever
+	return (index);
 }
 
-void			AudioManager::playBGM(void)
+void			AudioManager::playBGM(int index)
 {
-	Mix_Music *	clip = this->_bgmClips[std::rand() % this->_bgmClips.size()];
+	Mix_Music *	clip = this->_bgmClips[index];
 
 	Mix_PlayMusic(clip, -1);		// loop forever
 }

@@ -3,7 +3,7 @@
 
 # include "message.hpp"
 
-# include <string>
+# include <iostream>
 # include <SFML/Network.hpp>
 
 class Nibbler;
@@ -14,8 +14,8 @@ public:
 
 	virtual ~ANetworkEntity(void);
 
-	void			sendMessage(e_message message);
-	void			receiveMessages(void);
+	void					sendMessage(e_message message);
+	virtual void			receiveMessages(void) = 0;
 
 protected:
 
@@ -27,8 +27,6 @@ private:
 
 	ANetworkEntity(const ANetworkEntity & src);
 	ANetworkEntity &	operator=(const ANetworkEntity & rhs);
-
-	void			_handleSnakeSpawnInfo(sf::Packet & packet);
 
 };
 

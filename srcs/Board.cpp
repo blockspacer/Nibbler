@@ -1,46 +1,46 @@
 #include "Board.hpp"
 #include "SnakeCell.hpp"
 #include "FoodCell.hpp"
+#include "NibblerException.hpp"
+
 #include <iostream>
 
 Board::Board(int width, int height) : _width(width), _height(height)
 {
 	this->_cells.resize(this->_width * this->_height);
-
-	// TESTING
-	// std::shared_ptr<Cell> tempCell = std::make_shared<Cell>(0, 1);
-	// this->setCell(tempCell);		// NO LEAKS :)
-
 }
 
-Board::~Board(void) { }
+Board::~Board(void)
+{
+	this->_cells.clear();
+}
 
-int		Board::getWidth(void) const
+int			Board::getWidth(void) const
 {
 	return (this->_width);
 }
 
-int		Board::getHeight(void) const
+int			Board::getHeight(void) const
 {
 	return (this->_height);
 }
 
-Cell *	Board::getCell(int x, int y) const
+Cell *		Board::getCell(int x, int y) const
 {
 	return (this->_cells[this->_width * y + x].get());
 }
 
-bool	Board::isEmptyCell(int x, int y) const
+bool		Board::isEmptyCell(int x, int y) const
 {
 	return (this->_cells[this->_width * y + x].get() == nullptr);
 }
 
-bool	Board::isValidPosition(int x, int y) const
+bool		Board::isValidPosition(int x, int y) const
 {
 	return (0 <= x && x < this->_width && 0 <= y && y < this->_height);
 }
 
-void	Board::setCell(const std::shared_ptr<Cell> & cell)
+void		Board::setCell(const std::shared_ptr<Cell> & cell)
 {
 	int		x = cell->getX();
 	int		y = cell->getY();
@@ -48,35 +48,35 @@ void	Board::setCell(const std::shared_ptr<Cell> & cell)
 	this->_cells[this->_width * y + x] = cell;
 }
 
-void	Board::setCell(const std::shared_ptr<Cell> & cell, int x, int y)
+void		Board::setCell(const std::shared_ptr<Cell> & cell, int x, int y)
 {
 	cell->setXY(x, y);
 	this->_cells[this->_width * y + x] = cell;
 }
 
-void	Board::clearCell(int x, int y)
+void		Board::clearCell(int x, int y)
 {
 	this->_cells[this->_width * y + x].reset();
 }
 
-void	Board::clearAllCells(void)
+void		Board::clearAllCells(void)
 {
-	for (int i = 0; i < this->_width * this->_height; i++)
+	for (unsigned int i = 0; i < this->_cells.size(); i++)
 		this->_cells[i].reset();
 }
 
-void	Board::debug(void)
-{
-	Cell *	cell;
+// void		Board::debug(void)
+// {
+// 	Cell *	cell;
 
-	std::cout << "Board::debug()" << std::endl;
-	for (int i = 0; i < this->_width * this->_height; i++)
-		if ((cell = this->_cells[i].get()))
-			std::cout << cell->toString() << std::endl;
-	std::cout << std::endl;
-}
+// 	std::cout << "Board::debug()" << std::endl;
+// 	for (int i = 0; i < this->_width * this->_height; i++)
+// 		if ((cell = this->_cells[i].get()))
+// 			std::cout << cell->toString() << std::endl;
+// 	std::cout << std::endl;
+// }
 
-bool	Board::_findEmptyPosition(int & emptyX, int & emptyY)
+void		Board::_findEmptyPosition(int & emptyX, int & emptyY)
 {
 	int		startX = std::rand() % this->_width;
 	int		startY = std::rand() % this->_height;
@@ -90,7 +90,7 @@ bool	Board::_findEmptyPosition(int & emptyX, int & emptyY)
 		{
 			emptyX = x;
 			emptyY = y;
-			return (true);
+			return;
 		}
 		x += 1;
 		if (x == this->_width)
@@ -99,21 +99,24 @@ bool	Board::_findEmptyPosition(int & emptyX, int & emptyY)
 			y = (y + 1) % this->_height;
 		}
 		if (x == startX && y == startY)
-			return (false);
+			throw NibblerException("Board::_findEmptyPosition() failed");
 	}
 }
 
-void	Board::generateFood(void)
+FoodCell &	Board::generateFood(void)
 {
 	int		emptyX;
 	int		emptyY;
 
-	if (!this->_findEmptyPosition(emptyX, emptyY))
-		return;
-
+	this->_findEmptyPosition(emptyX, emptyY);
 	this->setCell(std::make_shared<FoodCell>(emptyX, emptyY, *this));
+	return (static_cast<FoodCell &>(*this->getCell(emptyX, emptyY)));
 }
 
+void		Board::generateFood(int foodID, int posX, int posY)
+{
+	this->setCell(std::make_shared<FoodCell>(foodID, posX, posY, *this));
+}
 
 
 

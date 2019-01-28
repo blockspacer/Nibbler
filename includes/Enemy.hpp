@@ -11,16 +11,22 @@ class Enemy
 {
 public:
 
+	Enemy(int id, int x, int y, e_direction direction, Board & board);
 	Enemy(int x, int y, e_direction direction, Board & board);
 	~Enemy(void);
 
+	int			getID(void) const;
 	bool		isDead(void) const;
 	e_direction	getDirection(void) const;
+
+
+	EnemyCell &	getEnemyCell(void) const;
 
 	void		update(void);
 
 private:
 
+	int				_id;
 	bool			_isDead;
 	e_direction		_direction;
 	Board &			_board;

@@ -9,6 +9,7 @@ class FoodCell : public Cell
 {
 public:
 
+	FoodCell(int id, int x, int y, Board & board);
 	FoodCell(int x, int y, Board & board);
 	~FoodCell(void);
 

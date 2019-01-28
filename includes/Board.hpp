@@ -4,6 +4,8 @@
 # include "Cell.hpp"
 # include <vector>
 
+class FoodCell;
+
 class Board
 {
 public:
@@ -23,9 +25,10 @@ public:
 	void		clearCell(int x, int y);
 	void		clearAllCells(void);
 
-	void		debug(void);
+	// void		debug(void);
 
-	void		generateFood(void);
+	FoodCell &	generateFood(void);
+	void		generateFood(int foodID, int posX, int posY);
 
 private:
 
@@ -38,7 +41,7 @@ private:
 	Board(const Board & src);
 	Board &	operator=(const Board & rhs);
 
-	bool		_findEmptyPosition(int & emptyX, int & emptyY);
+	void		_findEmptyPosition(int & emptyX, int & emptyY);
 
 };
 

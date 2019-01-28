@@ -28,18 +28,27 @@ void			Nibbler::createLocalGame(int boardWidth, int boardHeight, int numPlayers)
 {
 	Nibbler::_instance = new Nibbler(boardWidth, boardHeight, numPlayers);
 	Nibbler::_instance->_loop();
+
+	delete Nibbler::_instance;
+	Nibbler::_instance = nullptr;
 }
 
 void		Nibbler::createOnlineGameAsServer(int boardWidth, int boardHeight, unsigned short port)
 {
 	Nibbler::_instance = new Nibbler(boardWidth, boardHeight, port);
 	Nibbler::_instance->_loop();
+
+	delete Nibbler::_instance;
+	Nibbler::_instance = nullptr;
 }
 
 void		Nibbler::createOnlineGameAsClient(std::string & ipAddress, unsigned short port)
 {
 	Nibbler::_instance = new Nibbler(ipAddress, port);
 	Nibbler::_instance->_loop();
+
+	delete Nibbler::_instance;
+	Nibbler::_instance = nullptr;
 }
 
 Nibbler &		Nibbler::getInstance(void)
@@ -236,11 +245,25 @@ void		Nibbler::_loop(void)
 
 		this->_handleEvents();
 
-		if (t >= MS_PER_UPDATE)
+		if (this->_client == nullptr)
 		{
-			this->_update();
-			t -= MS_PER_UPDATE;
+			if (t >= MS_PER_UPDATE)
+			{
+				this->_update();
+				t -= MS_PER_UPDATE;
+
+				if (this->_server != nullptr)
+					this->_server->sendMessage(UPDATE_NOW);
+			}			
 		}
+
+		// if (t >= MS_PER_UPDATE)
+		// {
+		// 	this->_update();
+		// 	t -= MS_PER_UPDATE;
+		// }
+
+
 		this->_render();
 		// this->_displayGameStatus();
 	}
@@ -271,7 +294,8 @@ void		Nibbler::_update(void)
 		std::remove_if(this->_enemies.begin(), this->_enemies.end(), [](std::shared_ptr<Enemy> & enemy){ return (enemy->isDead()); }),
 		this->_enemies.end());
 
-	// this->_spawnEnemies();
+	if (this->_client == nullptr)
+		this->_spawnEnemies();
 
 	this->_checkIfRoundIsOver();
 }
@@ -279,6 +303,20 @@ void		Nibbler::_update(void)
 // # define	MAX_ENEMIES 5
 
 # define	SPAWN_RATE		5
+
+void		Nibbler::spawnEnemy(int id, int posX, int posY, e_direction direction)
+{
+	this->_enemies.push_back(std::make_shared<Enemy>(id, posX, posY, direction, *this->_board));	
+}
+
+void		Nibbler::_spawnEnemy(int posX, int posY, e_direction direction)
+{
+	this->_enemies.push_back(std::make_shared<Enemy>(posX, posY, direction, *this->_board));
+
+	if (this->_server != nullptr)
+		this->_server->sendEnemySpawnInfo(*this->_enemies.back());
+}
+
 
 void		Nibbler::_spawnEnemies(void)
 {
@@ -289,7 +327,8 @@ void		Nibbler::_spawnEnemies(void)
 		int		y = std::rand() % this->_board->getHeight();
 
 		if (this->_board->isEmptyCell(x, y))
-			this->_enemies.push_back(std::make_shared<Enemy>(x, y, WEST, *this->_board));
+			this->_spawnEnemy(x, y, WEST);
+			// this->_enemies.push_back(std::make_shared<Enemy>(x, y, WEST, *this->_board));
 	}
 
 	// spawn enemies that go EAST
@@ -299,7 +338,8 @@ void		Nibbler::_spawnEnemies(void)
 		int		y = std::rand() % this->_board->getHeight();
 
 		if (this->_board->isEmptyCell(x, y))
-			this->_enemies.push_back(std::make_shared<Enemy>(x, y, EAST, *this->_board));
+			this->_spawnEnemy(x, y, EAST);
+			// this->_enemies.push_back(std::make_shared<Enemy>(x, y, EAST, *this->_board));
 	}
 
 	// spawn enemies that go SOUTH
@@ -309,7 +349,8 @@ void		Nibbler::_spawnEnemies(void)
 		int		y = 0;
 
 		if (this->_board->isEmptyCell(x, y))
-			this->_enemies.push_back(std::make_shared<Enemy>(x, y, SOUTH, *this->_board));
+			this->_spawnEnemy(x, y, SOUTH);
+			// this->_enemies.push_back(std::make_shared<Enemy>(x, y, SOUTH, *this->_board));
 	}
 
 	// spawn enemies that go NORTH
@@ -319,7 +360,8 @@ void		Nibbler::_spawnEnemies(void)
 		int		y = this->_board->getHeight() - 1;
 
 		if (this->_board->isEmptyCell(x, y))
-			this->_enemies.push_back(std::make_shared<Enemy>(x, y, NORTH, *this->_board));
+			this->_spawnEnemy(x, y, NORTH);
+			// this->_enemies.push_back(std::make_shared<Enemy>(x, y, NORTH, *this->_board));
 	}
 }
 
@@ -419,13 +461,46 @@ void		Nibbler::terminate(bool fromOnlineMessage)
 
 void		Nibbler::debugBoard(void)
 {
-	this->_board->debug();
+	// this->_board->debug();
 }
 
 void		Nibbler::debugSnake(void)
 {
 	this->_snakes[0]->debug();
 }
+
+// void		Nibbler::_startNewRound(void)
+// {
+// 	this->_isRoundOver = false;
+// 	this->_roundNumber++;
+// 	this->_board->clearAllCells();
+// 	this->_enemies.clear();
+
+// 	// spawn snakes as server or local game
+// 	if (this->_client == nullptr)
+// 	{
+// 		for (int i = 0; i < this->_numPlayers; i++)
+// 		{
+// 			if (this->_numPlayers == 1)
+// 				this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor1PGame(i));
+// 			else
+// 				this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor2PGame(i));
+// 		}
+// 	}
+
+// 	// server sends snake spawn info
+// 	if (this->_server != nullptr)
+// 	{
+// 		this->_server->sendSnakeSpawnInfo(0, *this->_snakes[0]);
+// 		this->_server->sendSnakeSpawnInfo(1, *this->_snakes[1]);
+// 	}
+
+// 	// this->_board->generateFood();
+
+// 	this->spawnFood();
+
+// 	AudioManager::getInstance().playBGM();
+// }
 
 void		Nibbler::_startNewRound(void)
 {
@@ -444,52 +519,65 @@ void		Nibbler::_startNewRound(void)
 			else
 				this->_snakes[i] = std::unique_ptr<Snake>(this->_initSnakeFor2PGame(i));
 		}
+
+		FoodCell &	foodCell = this->_board->generateFood();
+		int			bgmID = AudioManager::getInstance().playBGM();
+
+		if (this->_server != nullptr)
+		{
+			this->_server->sendStartNewRoundInfo(*this->_snakes[0], *this->_snakes[1], foodCell, bgmID);
+		}
+
 	}
 
-	// server sends snake spawn info
-	if (this->_server != nullptr)
-	{
-		printf("Nibbler server startNewRound()\n");
-
-		this->_server->sendSnakeSpawnInfo(0, *this->_snakes[0]);
-		this->_server->sendSnakeSpawnInfo(1, *this->_snakes[1]);
-	}
-
-	// client receives snake spawn info
-	if (this->_client != nullptr)
-	{
-		// int			playerIndex;
-		// int			posX;
-		// int			posY;
-		// e_direction	direction;
-
-		// printf("Nibbler client startNewRound()\n");
-
-		// this->_client->receiveSnakeSpawnInfo(playerIndex, posX, posY, direction);
-		// this->_snakes[playerIndex] = std::unique_ptr<Snake>(new Snake(this->_players[playerIndex], *this->_board, posX, posY, direction));
-
-		// this->_client->receiveSnakeSpawnInfo(playerIndex, posX, posY, direction);
-		// this->_snakes[playerIndex] = std::unique_ptr<Snake>(new Snake(this->_players[playerIndex], *this->_board, posX, posY, direction));
-	}
-
-	// this->_board->generateFood();
-
-	AudioManager::getInstance().playBGM();
+	
 }
 
-void		Nibbler::spawnNewSnake(int playerID, int posX, int posY, e_direction direction)
+
+void			Nibbler::spawnFood(void)
+{
+	if (this->_client == nullptr)
+	{
+		FoodCell & foodCell = this->_board->generateFood();
+
+		if (this->_server != nullptr)
+			this->_server->sendFoodSpawnInfo(foodCell);
+	}
+}
+
+void		Nibbler::spawnFood(int foodID, int posX, int posY)
+{
+	this->_board->generateFood(foodID, posX, posY);
+}
+
+
+void		Nibbler::spawnSnake(int playerID, int posX, int posY, e_direction direction)
 {
 	this->_snakes[playerID] = std::unique_ptr<Snake>(new Snake(this->_players[playerID], *this->_board, posX, posY, direction));
 }
+
+// void		Nibbler::startNewRound(bool fromOnlineMessage)
+// {
+// 	if (fromOnlineMessage || (this->_client == nullptr))
+// 		this->_startNewRound();
+
+// 	if (!fromOnlineMessage && (this->_server != nullptr))
+// 		this->_server->sendMessage(START_NEW_ROUND);
+// 		this->_server->sendStartRoundInfo()
+// }
 
 
 void		Nibbler::startNewRound(bool fromOnlineMessage)
 {
 	if (fromOnlineMessage || (this->_client == nullptr))
+	{
 		this->_startNewRound();
+	}
 
-	if (!fromOnlineMessage && (this->_server != nullptr))
-		this->_server->sendMessage(START_NEW_ROUND);
+	// if (!fromOnlineMessage && (this->_server != nullptr))
+	// 	this->_server->sendStartRoundInfo();
+		// this->_server->sendMessage(START_NEW_ROUND);
+		
 }
 
 

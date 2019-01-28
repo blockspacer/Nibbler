@@ -1,5 +1,7 @@
 #include "Nibbler.hpp"
 #include "NibblerException.hpp"
+#include "ParsingException.hpp"
+
 #include <iostream>
 #include <exception>
 
@@ -25,13 +27,11 @@ int					parseNumber(std::string expr)
 	{
 		if (expr.find_first_not_of("0123456789") != std::string::npos)
 			throw std::exception();
-		return (std::stoi(expr));
+		return (std::stoi(expr));						// can get std::invalid argument, std::out_of_range exceptions
 	}
-	// can get std::invalid argument or std::out_of_range exceptions
 	catch (std::exception & exception)
 	{
-		std::cout << "Invalid number: " << expr << std::endl;
-		exit(EXIT_FAILURE);
+		throw ParsingException("Invalid number: " + expr);
 	}
 }
 
@@ -43,17 +43,15 @@ unsigned short		parsePort(std::string expr)
 	{
 		if (expr.find_first_not_of("0123456789") != std::string::npos)
 			throw std::exception();
-		port = std::stoi(expr);
+		port = std::stoi(expr);							// can get std::invalid argument, std::out_of_range exceptions
 		if (!(PORT_MIN <= port && port <= PORT_MAX))
 			throw std::exception();
 		return (static_cast<unsigned short>(port));
 	}
 	catch (std::exception & exception)
 	{
-		std::cout << "Invalid port: " << expr << std::endl;
-		std::cout << "Please use an acceptable port in the range [ " <<
-			PORT_MIN << ", " << PORT_MAX << " ]" << std::endl;
-		exit(EXIT_FAILURE);	
+		throw ParsingException("Invalid port: " + expr + "\nPlease use an acceptable port in the range [ " +
+			std::to_string(PORT_MIN) + ", " + std::to_string(PORT_MAX) + " ]");
 	}	
 }
 
@@ -63,32 +61,28 @@ void				startGame(t_options & options)
 	{
 		if (options.isServer)
 			Nibbler::createOnlineGameAsServer(options.boardWidth, options.boardHeight, options.port);
-			// Nibbler nibbler(options.boardWidth, options.boardHeight, options.port);
 		else
 			Nibbler::createOnlineGameAsClient(options.ipAddress, options.port);
-			// Nibbler nibbler(options.ipAddress, options.port);
 	}
 	else
 		Nibbler::createLocalGame(options.boardWidth, options.boardHeight, options.numPlayers);
-		// Nibbler nibbler(options.boardWidth, options.boardHeight, options.numPlayers);
 }
 
 void				terminateWithUsageError(void)
 {
-	std::cout << "usage:\n" \
+	std::cout << "\nusage:\n" \
 		"Local Game\t\t: Nibbler -l numPlayers boardWidth boardHeight\n" \
 		"Online 2P as Server\t: Nibbler -s port boardWidth boardHeight\n" \
-		"Online 2P as Client\t: Nibbler -c IP port" << std::endl;
+		"Online 2P as Client\t: Nibbler -c ipAddress port" << std::endl;
 	exit(EXIT_FAILURE);
 }
-
 
 /*
 	0			1			2			3			4
 
 	Nibbler		-l			numPlayers	boardWidth	boardHeight		// local game
 	Nibbler		-s			port		boardWidth	boardHeight		// online game as server
-	Nibbler		-c			IP			port						// online game as client
+	Nibbler		-c			ipAddress	port						// online game as client
 */
 
 t_options			parseOptions(int argc, char * argv[])
@@ -142,6 +136,12 @@ int					main(int argc, char * argv[])
 	{
 		t_options options = parseOptions(argc, argv);
 		startGame(options);
+	}
+	catch (ParsingException & exception)
+	{
+		std::cout << "ParsingException: " << exception.what() << std::endl;
+
+		terminateWithUsageError();
 	}
 	catch (NibblerException & exception)
 	{

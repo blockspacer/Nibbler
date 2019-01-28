@@ -45,7 +45,8 @@ public:
 
 	static AudioManager &	getInstance(void);
 
-	void					playBGM(void);
+	int						playBGM(void);
+	void					playBGM(int index);
 	void					playSFX(std::string id);
 
 private:
