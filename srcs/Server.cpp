@@ -9,7 +9,8 @@
 #include "Enemy.hpp"
 #include "EnemyCell.hpp"
 
-Server::Server(unsigned short port) : ANetworkEntity()
+Server::Server(unsigned short port) :
+	NetworkEntity()
 {
 	if (this->_listener.listen(port) != sf::Socket::Done)
 		throw NibblerException("sf::TcpListener::listen() failed");

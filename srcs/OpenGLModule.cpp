@@ -12,7 +12,17 @@
 #include "Shader.hpp"
 #include <iostream>
 
-OpenGLModule::OpenGLModule(Board & board, std::string title) : _board(board)
+extern "C"
+{
+	IModule *	createOpenGLModule(Nibbler & nibbler, Board & board, std::string title)
+	{
+		return (new OpenGLModule(nibbler, board, title));
+	}
+}
+
+OpenGLModule::OpenGLModule(Nibbler & nibbler, Board & board, std::string title) :
+	_nibbler(nibbler),
+	_board(board)
 {
 	this->_initOpenGLStuff(title);
 	this->_shader = new Shader();
@@ -157,96 +167,11 @@ void			OpenGLModule::handleEvents(void)
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 		else if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			this->_handleKeyPressEvent(event);
 	}
-	// this->_handleKeyHeldEvent();
 }
-
-// void			OpenGLModule::_handleKeyHeldEvent(void)
-// {
-// 	static const Uint8 *	keyState = SDL_GetKeyboardState(NULL);
-
-// 	(void)keyState;
-
-// 	// if (keyState[SDL_SCANCODE_1])
-// 	// {
-// 	// 	printf("OpenGLModule: pressed 1\n");
-// 	// 	Nibbler::getInstance().selectModule1();	
-// 	// }
-// 	// else if (keyState[SDL_SCANCODE_2])
-// 	// {
-// 	// 	printf("OpenGLModule: pressed 2\n");
-// 	// 	Nibbler::getInstance().selectModule2();
-// 	// }
-// 	// else if (keyState[SDL_SCANCODE_3])
-// 	// {
-// 	// 	printf("OpenGLModule: pressed 3\n");
-// 	// 	Nibbler::getInstance().selectModule3();
-// 	// }
-
-// 	if (keyState[SDL_SCANCODE_LSHIFT])
-// 	{
-// 		// if (keyState[SDL_SCANCODE_KP_7])
-// 		// 	this->_translate_x -= TRANSLATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_8])
-// 		// 	this->_translate_x += TRANSLATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_4])
-// 		// 	this->_translate_y -= TRANSLATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_5])
-// 		// 	this->_translate_y += TRANSLATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_1])
-// 		// 	this->_translate_z -= TRANSLATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_2])
-// 		// 	this->_translate_z += TRANSLATE_INC;
-// 	}
-// 	else if (keyState[SDL_SCANCODE_LCTRL])
-// 	{
-// 		// if (keyState[SDL_SCANCODE_KP_7])
-// 		// 	this->_scale_x *= SCALE_DEC;
-// 		// if (keyState[SDL_SCANCODE_KP_8])
-// 		// 	this->_scale_x *= SCALE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_4])
-// 		// 	this->_scale_y *= SCALE_DEC;
-// 		// if (keyState[SDL_SCANCODE_KP_5])
-// 		// 	this->_scale_y *= SCALE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_1])
-// 		// 	this->_scale_z *= SCALE_DEC;
-// 		// if (keyState[SDL_SCANCODE_KP_2])
-// 		// 	this->_scale_z *= SCALE_INC;
-// 	}
-// 	else
-// 	{
-// 		// if (keyState[SDL_SCANCODE_KP_7])
-// 		// 	this->_degrees_rotate_x -= ROTATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_8])
-// 		// 	this->_degrees_rotate_x += ROTATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_4])
-// 		// 	this->_degrees_rotate_y -= ROTATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_5])
-// 		// 	this->_degrees_rotate_y += ROTATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_1])
-// 		// 	this->_degrees_rotate_z -= ROTATE_INC;
-// 		// if (keyState[SDL_SCANCODE_KP_2])
-// 		// 	this->_degrees_rotate_z += ROTATE_INC;	
-// 	}
-
-// 	if (keyState[SDL_SCANCODE_PAGEUP])
-// 	{
-// 		// this->_scale_x *= SCALE_INC;
-// 		// this->_scale_y *= SCALE_INC;
-// 		// this->_scale_z *= SCALE_INC;
-// 	}
-// 	if (keyState[SDL_SCANCODE_PAGEDOWN])
-// 	{
-// 		// this->_scale_x *= SCALE_DEC;
-// 		// this->_scale_y *= SCALE_DEC;
-// 		// this->_scale_z *= SCALE_DEC;
-// 	}
-// }
-
-
 
 void			OpenGLModule::_handleKeyPressEvent(SDL_Event & event)
 {
@@ -254,32 +179,32 @@ void			OpenGLModule::_handleKeyPressEvent(SDL_Event & event)
 	{
 		// Gameplay Controls
 		case SDLK_ESCAPE:
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 			return;
 		case SDLK_LEFT:
-			Nibbler::getInstance().turnLeftP1();
+			this->_nibbler.turnLeftP1();
 			break;
 		case SDLK_RIGHT:
-			Nibbler::getInstance().turnRightP1();
+			this->_nibbler.turnRightP1();
 			break;
 		case SDLK_KP_4:
-			Nibbler::getInstance().turnLeftP2();
+			this->_nibbler.turnLeftP2();
 			break;
 		case SDLK_KP_6:
-			Nibbler::getInstance().turnRightP2();
+			this->_nibbler.turnRightP2();
 			break;
 		case SDLK_r:
-			Nibbler::getInstance().startNewRound();
+			this->_nibbler.startNewRound();
 			break;
 		// Graphics Controls
 		case SDLK_1:
-			Nibbler::getInstance().selectModule1();
+			this->_nibbler.selectModule1();
 			return;
 		case SDLK_2:
-			Nibbler::getInstance().selectModule2();
+			this->_nibbler.selectModule2();
 			return;
 		case SDLK_3:
-			Nibbler::getInstance().selectModule3();
+			this->_nibbler.selectModule3();
 			return;
 		case SDLK_KP_0:
 			this->_resetGraphicsParameters();
@@ -293,30 +218,6 @@ void			OpenGLModule::_handleKeyPressEvent(SDL_Event & event)
 		case SDLK_v:
 			this->_toggleView();
 			return;
-
-
-		// DEBUG
-
-		// case SDLK_TAB:
-		// 	printf("OpenGLModule: Pressed TAB\n");
-		// 	Nibbler::getInstance().selectNextModule();
-		// 	return;
-
-		case SDLK_d:
-			printf("OpenGLModule Module: Pressed D\n");
-			break;
-
-		case SDLK_SPACE:
-			Nibbler::getInstance()._update();
-			break;
-		
-		// case SDLK_b:					// TEMPORARY TESTING
-		// 	Nibbler::getInstance().debugBoard();
-		// 	break;
-		// case SDLK_s:					// TEMPORARY TESTING
-		// 	Nibbler::getInstance().debugSnake();
-		// 	break;
-
 		default:
 			break;
 	}
@@ -415,7 +316,7 @@ void				OpenGLModule::_updateViewMatrix(void)
 	// lock on player 1's view point
 	if (this->_isFirstPersonView)
 	{
-		SnakeCell &	headCell = Nibbler::getInstance().getActivePlayersSnakeHeadCell();
+		SnakeCell &	headCell = this->_nibbler.getActivePlayersSnakeHeadCell();
 		int			x = headCell.getX();
 		int			y = headCell.getY();
 		int			offset = 4;

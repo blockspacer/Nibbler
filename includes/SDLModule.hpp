@@ -44,7 +44,7 @@ class SDLModule : public IModule
 {
 public:
 
-	SDLModule(Board & board, std::string title);
+	SDLModule(Nibbler & nibbler, Board & board, std::string title);
 	~SDLModule(void);
 
 	virtual void				disable(void);
@@ -55,6 +55,7 @@ public:
 
 private:
 
+	Nibbler &					_nibbler;
 	Board &						_board;
 
 	bool						_isGridShown;

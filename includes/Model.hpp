@@ -45,7 +45,7 @@ class Model
 {
 public:
 
-	Model(std::string objFile, std::string textureFile);
+	Model(std::string objFilename, std::string textureFilename);
 	~Model(void);
 
 	const glm::mat4 &		getScaleMatrix(void) const;
@@ -106,7 +106,7 @@ private:
 	void					_centerAndScaleModel(void);
 
 	void					_generateGLData(void);
-	void					_generateGLDataRow(t_vec3 & v, t_vec2 &vt, t_vec3 &vn, glm::vec3 & faceNormal);
+	void					_generateGLDataRow(t_vec3 & v, t_vec2 & vt, t_vec3 & vn, glm::vec3 & faceNormal);
 	t_vec3					_getV(int vIndex);
 	t_vec2					_getVT(int vtIndex);
 	t_vec3					_getVN(int vnIndex, glm::vec3 & faceNormal);

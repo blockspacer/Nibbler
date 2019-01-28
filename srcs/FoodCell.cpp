@@ -14,7 +14,7 @@ FoodCell::FoodCell(int x, int y, Board & board) : Cell(x, y), _board(board)
 
 FoodCell::~FoodCell(void)
 {
-	// printf("~FoodCell()\n");
+	
 }
 
 int		FoodCell::getID(void) const

@@ -25,16 +25,13 @@ public:
 	void		clearCell(int x, int y);
 	void		clearAllCells(void);
 
-	// void		debug(void);
-
 	FoodCell &	generateFood(void);
-	void		generateFood(int foodID, int posX, int posY);
+	void		generateFood(int id, int posX, int posY);
 
 private:
 
 	int									_width;
 	int									_height;
-
 	std::vector<std::shared_ptr<Cell>>	_cells;
 
 	Board(void);

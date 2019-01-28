@@ -31,7 +31,7 @@ class OpenGLModule : public IModule
 {
 public:
 
-	OpenGLModule(Board & board, std::string title);
+	OpenGLModule(Nibbler & nibbler, Board & board, std::string title);
 	~OpenGLModule(void);
 
 	virtual void			disable(void);
@@ -42,6 +42,7 @@ public:
 
 private:
 
+	Nibbler &				_nibbler;
 	Board &					_board;
 
 	SDL_Window *			_window;
@@ -78,7 +79,6 @@ private:
 	void					_initLightPosition(void);
 
 	void					_handleKeyPressEvent(SDL_Event & event);
-	// void					_handleKeyHeldEvent(void);
 
 	void					_resetGraphicsParameters(void);
 	void					_toggleWireframeMode(void);
@@ -95,7 +95,7 @@ private:
 	void					_drawModelAtPositionFacing(Model & model, int x, int y, e_direction direction);
 
 	void					_updateViewMatrix(void);
-	
+
 };
 
 #endif

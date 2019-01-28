@@ -5,8 +5,10 @@
 #include <cfloat>
 #include <iostream>
 
-Model::Model(std::string objFile, std::string textureFile) :
-	_objFilename(objFile), _line_number(0), _triangle_count(0),
+Model::Model(std::string objFilename, std::string textureFilename) :
+	_objFilename(objFilename),
+	_line_number(0),
+	_triangle_count(0),
 	_scaleMatrix(glm::mat4(1.0f)),
 	_rotationMatrix(glm::mat4(1.0f)),
 	_translationMatrix(glm::mat4(1.0f)),
@@ -15,14 +17,17 @@ Model::Model(std::string objFile, std::string textureFile) :
 	_yMin(FLT_MAX), _yMax(-FLT_MAX),
 	_zMin(FLT_MAX), _zMax(-FLT_MAX)
 {
-	this->_readOBJFile(objFile);
+	this->_readOBJFile(objFilename);
 	this->_centerAndScaleModel();
 	this->_generateGLData();
 	this->_initVertexObjects();
-	this->_initTexture(textureFile);
+	this->_initTexture(textureFilename);
 }
 
-Model::~Model(void) { }
+Model::~Model(void)
+{
+
+}
 
 const glm::mat4 &		Model::getScaleMatrix(void) const
 {
@@ -346,7 +351,7 @@ void					Model::_generateGLData(void)
 	}
 }
 
-void					Model::_generateGLDataRow(t_vec3 & v, t_vec2 &vt, t_vec3 &vn, glm::vec3 & faceNormal)
+void					Model::_generateGLDataRow(t_vec3 & v, t_vec2 & vt, t_vec3 & vn, glm::vec3 & faceNormal)
 {
 	this->_glData.push_back(v.x);
 	this->_glData.push_back(v.y);
@@ -448,9 +453,3 @@ void					Model::_initTexture(std::string filename)
 		0, colorFormat, GL_UNSIGNED_BYTE, surface->pixels);
 	SDL_FreeSurface(surface);
 }
-
-
-
-
-
-

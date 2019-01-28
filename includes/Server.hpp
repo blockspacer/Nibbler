@@ -1,14 +1,14 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "ANetworkEntity.hpp"
+# include "NetworkEntity.hpp"
 
 class Board;
 class Snake;
 class FoodCell;
 class Enemy;
 
-class Server : public ANetworkEntity
+class Server : public NetworkEntity
 {
 public:
 	

@@ -5,7 +5,9 @@
 
 #include <iostream>
 
-Board::Board(int width, int height) : _width(width), _height(height)
+Board::Board(int width, int height) :
+	_width(width),
+	_height(height)
 {
 	this->_cells.resize(this->_width * this->_height);
 }
@@ -65,17 +67,6 @@ void		Board::clearAllCells(void)
 		this->_cells[i].reset();
 }
 
-// void		Board::debug(void)
-// {
-// 	Cell *	cell;
-
-// 	std::cout << "Board::debug()" << std::endl;
-// 	for (int i = 0; i < this->_width * this->_height; i++)
-// 		if ((cell = this->_cells[i].get()))
-// 			std::cout << cell->toString() << std::endl;
-// 	std::cout << std::endl;
-// }
-
 void		Board::_findEmptyPosition(int & emptyX, int & emptyY)
 {
 	int		startX = std::rand() % this->_width;
@@ -113,13 +104,7 @@ FoodCell &	Board::generateFood(void)
 	return (static_cast<FoodCell &>(*this->getCell(emptyX, emptyY)));
 }
 
-void		Board::generateFood(int foodID, int posX, int posY)
+void		Board::generateFood(int id, int posX, int posY)
 {
-	this->setCell(std::make_shared<FoodCell>(foodID, posX, posY, *this));
+	this->setCell(std::make_shared<FoodCell>(id, posX, posY, *this));
 }
-
-
-
-
-
-

@@ -11,10 +11,19 @@
 
 # define CELL_WIDTH			24
 
-SDLModule::SDLModule(Board & board, std::string title) : _board(board), _isGridShown(false)
+extern "C"
 {
-	// this->_board = Nibbler::getInstance().getBoard();
+	IModule *	createSDLModule(Nibbler & nibbler, Board & board, std::string title)
+	{
+		return (new SDLModule(nibbler, board, title));
+	}
+}
 
+SDLModule::SDLModule(Nibbler & nibbler, Board & board, std::string title) :
+	_nibbler(nibbler),
+	_board(board),
+	_isGridShown(false)
+{
 	if (SDL_Init(SDL_INIT_EVERYTHING))
 		throw NibblerException("SDL_Init() failed");
 
@@ -100,7 +109,7 @@ void			SDLModule::handleEvents(void)
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 		else if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			this->_handleKeyPressEvent(event);
 	}
@@ -112,60 +121,36 @@ void		SDLModule::_handleKeyPressEvent(SDL_Event & event)
 	{
 		// Gameplay Controls
 		case SDLK_ESCAPE:
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 			return;
 		case SDLK_LEFT:
-			Nibbler::getInstance().turnLeftP1();
+			this->_nibbler.turnLeftP1();
 			break;
 		case SDLK_RIGHT:
-			Nibbler::getInstance().turnRightP1();
+			this->_nibbler.turnRightP1();
 			break;
 		case SDLK_KP_4:
-			Nibbler::getInstance().turnLeftP2();
+			this->_nibbler.turnLeftP2();
 			break;
 		case SDLK_KP_6:
-			Nibbler::getInstance().turnRightP2();
+			this->_nibbler.turnRightP2();
 			break;
 		case SDLK_r:
-			Nibbler::getInstance().startNewRound();
+			this->_nibbler.startNewRound();
 			break;
 		// Graphics Controls
 		case SDLK_1:
-			Nibbler::getInstance().selectModule1();
+			this->_nibbler.selectModule1();
 			return;
 		case SDLK_2:
-			Nibbler::getInstance().selectModule2();
+			this->_nibbler.selectModule2();
 			return;
 		case SDLK_3:
-			Nibbler::getInstance().selectModule3();
+			this->_nibbler.selectModule3();
 			return;
 		case SDLK_g:
 			this->_toggleGrid();
 			break;
-
-
-		// DEBUG
-
-		// case SDLK_TAB:
-		// 	printf("SDL Module: Pressed TAB\n");
-		// 	Nibbler::getInstance().selectNextModule();
-		// 	return;
-
-		case SDLK_d:
-			printf("SDL Module: Pressed D\n");
-			break;
-
-		case SDLK_SPACE:
-			Nibbler::getInstance()._update();
-			break;
-		
-		// case SDLK_b:					// TEMPORARY TESTING
-		// 	Nibbler::getInstance().debugBoard();
-		// 	break;
-		// case SDLK_s:					// TEMPORARY TESTING
-		// 	Nibbler::getInstance().debugSnake();
-		// 	break;
-
 		default:
 			break;
 	}

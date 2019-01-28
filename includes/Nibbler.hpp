@@ -36,8 +36,6 @@ public:
 
 	~Nibbler(void);
 
-	Board &				getBoard(void) const;
-
 	void				terminate(bool fromOnlineMessage=false);
 
 	void				selectModule1(bool fromOnlineMessage=false);

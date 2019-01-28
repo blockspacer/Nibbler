@@ -2,9 +2,11 @@
 #include "Nibbler.hpp"
 #include "NibblerException.hpp"
 #include "message.hpp"
+#include "direction.hpp"
 #include "AudioManager.hpp"
 
-Client::Client(std::string & ipAddress, unsigned short port) : ANetworkEntity()
+Client::Client(std::string & ipAddress, unsigned short port) :
+	NetworkEntity()
 {
 	std::cout << "[Client] Attempting to connect to server at " << ipAddress << ":" << port << " ..." << std::endl;
 

@@ -7,7 +7,18 @@
 #include "FoodCell.hpp"
 #include "EnemyCell.hpp"
 
-SFMLModule::SFMLModule(Board & board, std::string title) : _board(board), _title(title)
+extern "C"
+{
+	IModule *	createSFMLModule(Nibbler & nibbler, Board & board, std::string title)
+	{
+		return (new SFMLModule(nibbler, board, title));
+	}
+}
+
+SFMLModule::SFMLModule(Nibbler & nibbler, Board & board, std::string title) :
+	_nibbler(nibbler),
+	_board(board),
+	_title(title)
 {
 	this->enable();
 }
@@ -39,7 +50,7 @@ void			SFMLModule::handleEvents(void)
 	while (this->_renderWindow.pollEvent(event))
 	{
 		if (event.type == sf::Event::EventType::Closed)
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 		else if (event.type == sf::Event::EventType::KeyPressed)
 			this->_handleKeyPressEvent(event);
 	}
@@ -51,54 +62,33 @@ void			SFMLModule::_handleKeyPressEvent(sf::Event & event)
 	{
 		// Gameplay Controls
 		case sf::Keyboard::Escape:
-			Nibbler::getInstance().terminate();
+			this->_nibbler.terminate();
 			break;
 		case sf::Keyboard::Left:
-			Nibbler::getInstance().turnLeftP1();
+			this->_nibbler.turnLeftP1();
 			break;
 		case sf::Keyboard::Right:
-			Nibbler::getInstance().turnRightP1();
+			this->_nibbler.turnRightP1();
 			break;
 		case sf::Keyboard::Numpad4:
-			Nibbler::getInstance().turnLeftP2();
+			this->_nibbler.turnLeftP2();
 			break;
 		case sf::Keyboard::Numpad6:
-			Nibbler::getInstance().turnRightP2();
+			this->_nibbler.turnRightP2();
 			break;
 		case sf::Keyboard::R:
-			Nibbler::getInstance().startNewRound();
+			this->_nibbler.startNewRound();
 			break;
 		// Graphics Controls
 		case sf::Keyboard::Num1:
-			Nibbler::getInstance().selectModule1();
+			this->_nibbler.selectModule1();
 			break;
 		case sf::Keyboard::Num2:
-			Nibbler::getInstance().selectModule2();
+			this->_nibbler.selectModule2();
 			break;
 		case sf::Keyboard::Num3:
-			Nibbler::getInstance().selectModule3();
+			this->_nibbler.selectModule3();
 			break;
-
-
-
-		// DEBUG
-
-		// case sf::Keyboard::Tab:
-		// 	printf("SFML Module: Pressed TAB\n");
-		// 	Nibbler::getInstance().selectNextModule();
-		// 	break;
-
-		case sf::Keyboard::Space:
-			Nibbler::getInstance()._update();
-			break;
-
-		case sf::Keyboard::D:
-			printf("SFML Module: Pressed D\n");
-			break;
-
-
-
-
 		default:
 			break;
 	}

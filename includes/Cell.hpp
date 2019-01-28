@@ -12,7 +12,6 @@ public:
 
 	int				getX(void) const;
 	int				getY(void) const;
-	std::string		toString(void) const;
 
 	void			setXY(int x, int y);
 

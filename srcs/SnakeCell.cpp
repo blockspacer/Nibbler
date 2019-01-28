@@ -2,14 +2,18 @@
 #include "Snake.hpp"
 
 SnakeCell::SnakeCell(int x, int y, Snake & snake, e_direction direction, bool isHead, size_t index) :
-	Cell(x, y), _snake(snake), _direction(direction), _isHead(isHead), _index(index)
+	Cell(x, y),
+	_snake(snake),
+	_direction(direction),
+	_isHead(isHead),
+	_index(index)
 {
 	
 }
 
 SnakeCell::~SnakeCell(void)
 {
-	// printf("~SnakeCell()\n");
+
 }
 
 Snake &		SnakeCell::getSnake(void) const

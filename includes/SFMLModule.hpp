@@ -19,7 +19,7 @@ class SFMLModule : public IModule
 {
 public:
 
-	SFMLModule(Board & board, std::string title);
+	SFMLModule(Nibbler & nibbler, Board & board, std::string title);
 	~SFMLModule(void);
 
 	virtual void				disable(void);
@@ -30,6 +30,7 @@ public:
 
 private:
 
+	Nibbler &					_nibbler;
 	Board &						_board;
 	std::string					_title;
 

@@ -19,17 +19,14 @@ public:
 	bool									isDead(void) const;
 	int										getID(void) const;
 	int										getLength(void) const;
-
 	SnakeCell &								getHeadCell(void) const;
 	
-	void									die(void);
 	void									update(void);
 	void									turnLeft(void);
 	void									turnRight(void);
 
 	void									getHitAtIndex(size_t index);
-
-	void									debug(void);
+	void									die(void);
 
 private:
 

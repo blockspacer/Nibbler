@@ -19,12 +19,6 @@
 # define BGM_07				"bgm/Hydrogen.ogg"
 # define BGM_08				"bgm/InnerAnimal.ogg"
 # define BGM_09				"bgm/ItsSafeNow.ogg"
-// # define BGM_10				"bgm/Knock.ogg"
-// # define BGM_11				"bgm/Miami2.ogg"
-// # define BGM_12				"bgm/Musikk2.ogg"
-// # define BGM_13				"bgm/Paris2.ogg"
-// # define BGM_14				"bgm/Perturbator.ogg"
-// # define BGM_15				"bgm/TurfMain.ogg"
 
 # define EATING_SFX			"sounds/om_nom.wav"
 # define DEATH_SFX			"sounds/wilheim_scream.wav"

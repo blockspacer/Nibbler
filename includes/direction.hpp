@@ -9,4 +9,6 @@ enum e_direction
 	NORTH
 };
 
+e_direction		rand_direction(void);
+
 #endif

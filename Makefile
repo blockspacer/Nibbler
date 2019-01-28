@@ -25,12 +25,6 @@ SFML_LINK := -Wl,-rpath $(SFML_LOC)/lib \
 	-L $(SFML_LOC)/lib/ -lsfml-window \
 	-L $(SFML_LOC)/lib/ -lsfml-system \
 	-L $(SFML_LOC)/lib/ -lsfml-network \
-	#-L $(SFML_LOC)/lib/ -lsfml-audio \
-	
-
-# GLFW_LOC := $(shell brew --prefix glfw)
-# GLFW_INC := $(GLFW_LOC)/include
-# GLFW_LINK := -L $(GLFW_LOC)/lib -lglfw
 
 GLEW_LOC := $(shell brew --prefix glew)
 GLEW_INC := $(GLEW_LOC)/include/
@@ -39,7 +33,7 @@ GLEW_LINK := -L $(GLEW_LOC)/lib/ -lGLEW
 GLM_LOC := $(shell brew --prefix glm)
 GLM_INC := $(GLM_LOC)/include/
 
-CFLAGS := -std=c++11 -Wall -Werror -Wextra -Wfatal-errors #-g -fsanitize=address
+CFLAGS := -std=c++11 -Wall -Werror -Wextra -Wfatal-errors -g -fsanitize=address
 
 INCLUDES := includes/
 HEADERS := -I $(INCLUDES) \
@@ -53,7 +47,6 @@ HEADERS := -I $(INCLUDES) \
 
 SRCSDIR := srcs/
 SRCS := \
-ANetworkEntity.cpp \
 AudioManager.cpp \
 Board.cpp \
 Cell.cpp \
@@ -62,6 +55,7 @@ Enemy.cpp \
 EnemyCell.cpp \
 FoodCell.cpp \
 Model.cpp \
+NetworkEntity.cpp \
 Nibbler.cpp \
 NibblerException.cpp \
 OpenGLModule.cpp \
@@ -74,54 +68,72 @@ Server.cpp \
 Shader.cpp \
 Snake.cpp \
 SnakeCell.cpp \
+direction.cpp \
 main.cpp
 
 OBJDIR := objs/
 OBJS := $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 
+MY_SFML_LIB := myLibSFML.so
+MY_SDL_LIB := myLibSDL.so
+MY_OpenGL_LIB := myLibOpenGL.so
+
+
 # all: sdl2 sdl2_image sdl2_ttf sdl2_mixer sfml $(TARGET)
 all: $(TARGET)
 	# ./$(TARGET)
 
-sdl2:
-	@echo "\x1b[1mInstalling SDL2 library...\x1b[0m"
-	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -v sdl2
-	@echo
-
-sdl2_image:
-	@echo "\x1b[1mInstalling SDL2 Image library...\x1b[0m"
-	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -v sdl2_image
-	@echo
-
-sdl2_ttf:
-	@echo "\x1b[1mInstalling SDL2 TTF library...\x1b[0m"
-	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -v sdl2_ttf
-	@echo
-
-sdl2_mixer:
-	@echo "\x1b[1mInstalling SDL2 Mixer library...\x1b[0m"
-	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -v sdl2_mixer --with-mpg123
-	@echo
-
-sfml:
-	@echo "\x1b[1mInstalling SFML library...\x1b[0m"
-	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -v sfml
-	@echo
-
-$(OBJDIR)%.o: $(SRCSDIR)%.cpp
-	@mkdir -p $(OBJDIR)
-	$(CC) -c $(CFLAGS) $(HEADERS) $< -o $@
-
-$(TARGET): $(OBJS)
-	@echo "\x1b[1mBuilding $(TARGET)...\x1b[0m"
-	$(CC) -o $(TARGET) $(OBJS) \
+$(MY_SFML_LIB):
+	@echo "\x1b[1mBuilding $(MY_SFML_LIB)...\x1b[0m"
+	$(CC) -shared -fPIC $(HEADERS) \
+		-o $(MY_SFML_LIB) $(OBJS) \
 		$(SDL2_LINK) \
 		$(SDL2_IMAGE_LINK) \
 		$(SDL2_TTF_LINK) \
 		$(SDL2_MIXER_LINK) \
 		$(SFML_LINK) \
 		$(GLEW_LINK) \
-		-framework OpenGL #-g -fsanitize=address
+		-framework OpenGL -g -fsanitize=address
+
+$(MY_SDL_LIB):
+	@echo "\x1b[1mBuilding $(MY_SDL_LIB)...\x1b[0m"
+	$(CC) -shared -fPIC $(HEADERS) \
+		-o $(MY_SDL_LIB) $(OBJS) \
+		$(SDL2_LINK) \
+		$(SDL2_IMAGE_LINK) \
+		$(SDL2_TTF_LINK) \
+		$(SDL2_MIXER_LINK) \
+		$(SFML_LINK) \
+		$(GLEW_LINK) \
+		-framework OpenGL -g -fsanitize=address
+
+$(MY_OpenGL_LIB):
+	@echo "\x1b[1mBuilding $(MY_OpenGL_LIB)...\x1b[0m"
+	$(CC) -shared -fPIC $(HEADERS) \
+		-o $(MY_OpenGL_LIB) $(OBJS) \
+		$(SDL2_LINK) \
+		$(SDL2_IMAGE_LINK) \
+		$(SDL2_TTF_LINK) \
+		$(SDL2_MIXER_LINK) \
+		$(SFML_LINK) \
+		$(GLEW_LINK) \
+		-framework OpenGL -g -fsanitize=address
+
+$(OBJDIR)%.o: $(SRCSDIR)%.cpp
+	@mkdir -p $(OBJDIR)
+	$(CC) -c $(CFLAGS) $(HEADERS) $< -o $@
+
+$(TARGET): $(OBJS) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB)
+	@echo "\x1b[1mBuilding $(TARGET)...\x1b[0m"
+	$(CC) -o $(TARGET) $(OBJS) \
+		$(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB) \
+		$(SDL2_LINK) \
+		$(SDL2_IMAGE_LINK) \
+		$(SDL2_TTF_LINK) \
+		$(SDL2_MIXER_LINK) \
+		$(SFML_LINK) \
+		$(GLEW_LINK) \
+		-framework OpenGL -g -fsanitize=address
 	@echo "\x1b[1mBuild finished!!\x1b[0m"
 
 clean:
@@ -131,7 +143,7 @@ clean:
 
 fclean: clean
 	@echo "\x1b[1mFcleaning...\x1b[0m"
-	/bin/rm -f $(TARGET)
+	/bin/rm -f $(TARGET) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB)
 	@echo
 
 re: fclean all

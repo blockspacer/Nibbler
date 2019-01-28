@@ -1,10 +1,9 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include "ANetworkEntity.hpp"
-# include "direction.hpp"
+# include "NetworkEntity.hpp"
 
-class Client : public ANetworkEntity
+class Client : public NetworkEntity
 {
 public:
 

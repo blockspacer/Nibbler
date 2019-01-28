@@ -8,16 +8,11 @@
 #include "AudioManager.hpp"
 #include <iostream>
 
-
-SnakeCell &			Snake::getHeadCell(void) const
-{
-	return (*this->_snakeCells[0]);
-}
-
-
-
 Snake::Snake(Player & player, Board & board, int x, int y, e_direction direction) :
-	_player(player), _board(board), _isDead(false), _nextDirection(direction)
+	_player(player),
+	_board(board),
+	_isDead(false),
+	_nextDirection(direction)
 {
 	this->_initSnakeCells(x, y);
 	this->_registerSnakeCellsToBoard();
@@ -79,17 +74,9 @@ int			Snake::getLength(void) const
 	return (static_cast<int>(this->_snakeCells.size()));
 }
 
-void		Snake::die(void)
+SnakeCell &			Snake::getHeadCell(void) const
 {
-	if (this->_isDead)
-		return;
-
-	AudioManager::getInstance().playSFX("death");
-	this->_isDead = true;
-	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
-		this->_board.clearCell(snakeCell->getX(), snakeCell->getY());
-	this->_snakeCells.resize(1);
-	this->_board.setCell(this->_snakeCells.front());
+	return (*this->_snakeCells[0]);
 }
 
 void		Snake::_getNextXY(int & nextX, int & nextY) const
@@ -156,12 +143,12 @@ void		Snake::_interactWithTarget(Cell & target)
 	// collided and dieded
 	else
 	{
-		this->die();
-
 		SnakeCell * enemySnakeCell;
 		if ((enemySnakeCell = dynamic_cast<SnakeCell *>(&target)) &&
 			enemySnakeCell->isHead())
 			enemySnakeCell->getSnake().die();
+
+		this->die();
 	}
 }
 
@@ -198,7 +185,7 @@ void		Snake::turnLeft(void)
 {
 	e_direction		currentDirection = this->_snakeCells.front()->getDirection();
 
-	switch(currentDirection)
+	switch (currentDirection)
 	{
 		case EAST:
 			this->_nextDirection = NORTH;
@@ -219,7 +206,7 @@ void		Snake::turnRight(void)
 {
 	e_direction		currentDirection = this->_snakeCells.front()->getDirection();
 
-	switch(currentDirection)
+	switch (currentDirection)
 	{
 		case EAST:
 			this->_nextDirection = SOUTH;
@@ -236,16 +223,6 @@ void		Snake::turnRight(void)
 	}
 }
 
-void		Snake::debug(void)
-{
-	std::cout << "Snake::debug()" << std::endl;
-	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
-	{
-		std::cout << snakeCell->toString() << ", reference count = " << snakeCell.use_count() << std::endl;
-	}
-	std::cout << std::endl;
-}
-
 void		Snake::getHitAtIndex(size_t index)
 {
 	AudioManager::getInstance().playSFX("hurt");
@@ -258,8 +235,15 @@ void		Snake::getHitAtIndex(size_t index)
 	this->_snakeCells.resize(index);
 }
 
+void		Snake::die(void)
+{
+	if (this->_isDead)
+		return;
 
-
-
-
-
+	AudioManager::getInstance().playSFX("death");
+	this->_isDead = true;
+	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
+		this->_board.clearCell(snakeCell->getX(), snakeCell->getY());
+	this->_snakeCells.resize(1);
+	this->_board.setCell(this->_snakeCells.front());
+}
