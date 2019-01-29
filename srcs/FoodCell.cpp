@@ -35,6 +35,6 @@ t_cell_data		FoodCell::getCellData(void) const
 
 void			FoodCell::getHit(void)
 {
-	this->_board.clearCell(this->_x, this->_y);
 	Nibbler::getInstance().spawnFood();
+	this->_board.clearCell(this->_x, this->_y);
 }
