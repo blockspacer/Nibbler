@@ -331,14 +331,22 @@ void		Nibbler::_update(void)
 		return;
 
 	for (int i = 0; i < this->_numPlayers; i++)
+	{
 		this->_snakes[i]->update();
+	}
 
 	this->_checkIfRoundIsOver();
 	if (this->_isRoundOver)
 		return;
 
 	for (size_t i = 0; i < this->_enemies.size(); i++)
+	{
 		this->_enemies[i]->update();
+	}
+
+	this->_checkIfRoundIsOver();
+	if (this->_isRoundOver)
+		return;
 
 	// remove all dead enemies
 	this->_enemies.erase(
@@ -346,7 +354,7 @@ void		Nibbler::_update(void)
 		this->_enemies.end());
 
 	if (this->_client == nullptr)
-		;//this->_spawnEnemies();
+		this->_spawnEnemies();
 
 	this->_checkIfRoundIsOver();
 }
@@ -414,9 +422,10 @@ void		Nibbler::_spawnEnemies(void)
 
 void			Nibbler::_render(void)
 {
-	IModule	*	module = this->_modules[this->_moduleIndex];
-
+	IModule	*					module = this->_modules[this->_moduleIndex];
 	std::vector<t_cell_data>	cellData = this->_board->getCellData();
+
+	bool						didIt = false;
 
 	for (t_cell_data & data : cellData)
 	{
@@ -424,8 +433,13 @@ void			Nibbler::_render(void)
 		{
 			data.isActivePlayer = (data.isPlayer0 && (this->_client == nullptr)) ||
 				(!data.isPlayer0 && (this->_client != nullptr));
+
+			didIt = true;
 		}
 	}
+
+	assert(didIt == true);
+
 	module->render(cellData);
 }
 

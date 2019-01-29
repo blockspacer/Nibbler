@@ -35,7 +35,7 @@ private:
 
 	void							_handleKeyPressEvent(std::vector<e_event> & myEvents, sf::Event & event);
 
-	void							_renderCell(t_cell_data cellData);
+	void							_renderCell(t_cell_data & cellData);
 	void							_renderSnakeCell(t_cell_data & cellData, sf::RectangleShape & rect);
 	void							_renderFoodCell(t_cell_data & cellData, sf::RectangleShape & rect);
 	void							_renderEnemyCell(t_cell_data & cellData, sf::RectangleShape & rect);

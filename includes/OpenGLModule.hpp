@@ -80,7 +80,7 @@ private:
 	void							_toggleView(void);
 
 	void							_renderFloorAndWalls(void);
-	void							_renderCell(t_cell_data cellData);
+	void							_renderCell(t_cell_data & cellData);
 	void							_renderSnakeCell(t_cell_data & cellData);
 	void							_renderFoodCell(t_cell_data & cellData);
 	void							_renderEnemyCell(t_cell_data & cellData);

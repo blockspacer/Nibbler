@@ -47,7 +47,7 @@ std::vector<t_cell_data>		Board::getCellData(void) const
 	Cell *						cell;
 	std::vector<t_cell_data>	dataData;
 
-	for (unsigned int i = 0; i < this->_cells.size(); i++)
+	for (size_t i = 0; i < this->_cells.size(); i++)
 		if ((cell = this->_cells[i].get()))
 			dataData.push_back(cell->getCellData());
 	return (dataData);
@@ -75,7 +75,7 @@ void		Board::clearCell(int x, int y)
 
 void		Board::clearAllCells(void)
 {
-	for (unsigned int i = 0; i < this->_cells.size(); i++)
+	for (size_t i = 0; i < this->_cells.size(); i++)
 		this->_cells[i].reset();
 }
 

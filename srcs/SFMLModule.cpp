@@ -97,13 +97,13 @@ void			SFMLModule::render(std::vector<t_cell_data> cellData)
 {
 	this->_renderWindow.clear(sf::Color::Black);
 
-	for (size_t i = 0; i < cellData.size(); i++)
-		this->_renderCell(cellData[i]);
+	for (t_cell_data & data : cellData)
+		this->_renderCell(data);
 
 	this->_renderWindow.display();
 }
 
-void			SFMLModule::_renderCell(t_cell_data cellData)
+void			SFMLModule::_renderCell(t_cell_data & cellData)
 {
 	sf::RectangleShape	rect;
 

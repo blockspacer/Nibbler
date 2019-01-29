@@ -77,7 +77,7 @@ private:
 	void							_toggleGrid(void);
 	void							_drawGrid(void);
 
-	void							_renderCell(t_cell_data cellData);
+	void							_renderCell(t_cell_data & cellData);
 	void							_renderSnakeCell(t_cell_data & cellData, SDL_Rect & dstRect);
 	void							_renderFoodCell(t_cell_data & cellData, SDL_Rect & dstRect);
 	void							_renderEnemyCell(t_cell_data & cellData, SDL_Rect & dstRect);

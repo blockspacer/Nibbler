@@ -2,6 +2,7 @@
 #include "EnemyCell.hpp"
 #include "Board.hpp"
 #include "Cell.hpp"
+#include "SnakeCell.hpp"
 
 Enemy::Enemy(int id, int x, int y, e_direction direction, Board & board) :
 	Enemy(x, y, direction, board)
@@ -80,6 +81,7 @@ void			Enemy::update(void)
 	int			nextX;
 	int			nextY;
 	Cell *		nextCell;
+	SnakeCell *	snakeCell;
 
 	this->_getNextXY(nextX, nextY);
 	this->_board.clearCell(currentX, currentY);
@@ -87,7 +89,11 @@ void			Enemy::update(void)
 	{
 		if ((nextCell = this->_board.getCell(nextX, nextY)))
 			nextCell->getHit();
-		this->_board.setCell(this->_enemyCell, nextX, nextY);
+
+		if (!((snakeCell = dynamic_cast<SnakeCell *>(nextCell)) && snakeCell->isHead()))
+			this->_board.setCell(this->_enemyCell, nextX, nextY);
+		else
+			this->_board.setCell(this->_enemyCell, currentX, currentY);
 	}
 	else
 		this->_isDead = true;

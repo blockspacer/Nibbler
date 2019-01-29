@@ -304,8 +304,8 @@ void			OpenGLModule::render(std::vector<t_cell_data> cellData)
 
 	this->_renderFloorAndWalls();
 
-	for (size_t i = 0; i < cellData.size(); i++)
-		this->_renderCell(cellData[i]);
+	for (t_cell_data & data : cellData)
+		this->_renderCell(data);
 
 	SDL_GL_SwapWindow(this->_window);
 }
@@ -384,7 +384,7 @@ void			OpenGLModule::_renderFloorAndWalls(void)
 }
 
 
-void			OpenGLModule::_renderCell(t_cell_data cellData)
+void			OpenGLModule::_renderCell(t_cell_data & cellData)
 {
 	switch (cellData.type)
 	{

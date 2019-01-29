@@ -187,13 +187,13 @@ void			SDLModule::render(std::vector<t_cell_data> cellData)
 	if (this->_isGridShown)
 		this->_drawGrid();
 
-	for (size_t i = 0; i < cellData.size(); i++)
-		this->_renderCell(cellData[i]);
+	for (t_cell_data & data : cellData)
+		this->_renderCell(data);
 
 	SDL_RenderPresent(this->_renderer);
 }
 
-void			SDLModule::_renderCell(t_cell_data cellData)
+void			SDLModule::_renderCell(t_cell_data & cellData)
 {
 	SDL_Rect	dstRect;
 
