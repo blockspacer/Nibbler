@@ -346,7 +346,7 @@ void		Nibbler::_update(void)
 		this->_enemies.end());
 
 	if (this->_client == nullptr)
-		; //this->_spawnEnemies();
+		this->_spawnEnemies();
 
 	this->_checkIfRoundIsOver();
 }
