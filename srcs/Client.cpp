@@ -78,6 +78,13 @@ void			Client::receiveMessages(void)
 				Nibbler::getInstance().turnRightP1(true);
 				break;
 
+			case P2_TURN_LEFT:
+				Nibbler::getInstance().turnLeftP2(true);
+				break;
+			case P2_TURN_RIGHT:
+				Nibbler::getInstance().turnRightP2(true);
+				break;
+
 			case SELECT_MODULE_1:
 				Nibbler::getInstance().selectModule1(true);
 				break;

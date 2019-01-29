@@ -594,26 +594,108 @@ void		Nibbler::turnRightP1(bool fromOnlineMessage)
 	if (this->_server != nullptr)
 		this->_server->sendMessage(P1_TURN_RIGHT);
 }
+/*
+// local game:
+P2 turn left just do it
+
+
+// server
+ignore it
+
+
+
+// client
+send a message to server
+but don't do it yet
+
+
+
+*/
+
+
 
 void		Nibbler::turnLeftP2(bool fromOnlineMessage)
 {
-	// if local 2P or client game, or if server received message, then P2 turn left
-	if (fromOnlineMessage || (this->_numPlayers == 2 && this->_server == nullptr))
+	// local
+	if (this->_numPlayers == 2 && (this->_server == nullptr) && (this->_client == nullptr))
+	{
 		this->_snakes[1]->turnLeft();
+		return;
+	}
 
+	// server
+	if (this->_server != nullptr)
+	{
+		if (fromOnlineMessage)
+		{
+			this->_snakes[1]->turnLeft();
+			this->_server->sendMessage(P2_TURN_LEFT);
+		}
+		return;
+	}
+		
+	// client
 	if (this->_client != nullptr)
-		this->_client->sendMessage(P2_TURN_LEFT);
+	{
+		if (fromOnlineMessage)
+			this->_snakes[1]->turnLeft();
+		else
+			this->_client->sendMessage(P2_TURN_LEFT);
+	}
 }
 
 void		Nibbler::turnRightP2(bool fromOnlineMessage)
 {
-	// if local 2P or client game, or if server received message, then P2 turn right
-	if (fromOnlineMessage || (this->_numPlayers == 2 && this->_server == nullptr))
+	// local
+	if (this->_numPlayers == 2 && (this->_server == nullptr) && (this->_client == nullptr))
+	{
 		this->_snakes[1]->turnRight();
+		return;
+	}
 
+	// server
+	if (this->_server != nullptr)
+	{
+		if (fromOnlineMessage)
+		{
+			this->_snakes[1]->turnRight();
+			this->_server->sendMessage(P2_TURN_RIGHT);
+		}
+		return;
+	}
+
+	// client
 	if (this->_client != nullptr)
-		this->_client->sendMessage(P2_TURN_RIGHT);
+	{
+		if (fromOnlineMessage)
+			this->_snakes[1]->turnRight();
+		else
+			this->_client->sendMessage(P2_TURN_RIGHT);
+	}
 }
+
+
+
+
+// void		Nibbler::turnLeftP2(bool fromOnlineMessage)
+// {
+// 	// if local 2P or client game, or if server received message, then P2 turn left
+// 	if (fromOnlineMessage || (this->_numPlayers == 2 && this->_server == nullptr))
+// 		this->_snakes[1]->turnLeft();
+
+// 	if (this->_client != nullptr)
+// 		this->_client->sendMessage(P2_TURN_LEFT);
+// }
+
+// void		Nibbler::turnRightP2(bool fromOnlineMessage)
+// {
+// 	// if local 2P or client game, or if server received message, then P2 turn right
+// 	if (fromOnlineMessage || (this->_numPlayers == 2 && this->_server == nullptr))
+// 		this->_snakes[1]->turnRight();
+
+// 	if (this->_client != nullptr)
+// 		this->_client->sendMessage(P2_TURN_RIGHT);
+// }
 
 void		Nibbler::selectModule1(bool fromOnlineMessage)
 {
