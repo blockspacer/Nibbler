@@ -13,14 +13,15 @@ public:
 	FoodCell(int x, int y, Board & board);
 	~FoodCell(void);
 
-	int				getID(void) const;
+	int						getID(void) const;
+	virtual t_cell_data		getCellData(void) const;
 
-	virtual void	getHit(void);
+	virtual void			getHit(void);
 
 private:
 
-	Board &			_board;
-	int				_id;
+	Board &					_board;
+	int						_id;
 
 	FoodCell(void);
 	FoodCell(const FoodCell & src);

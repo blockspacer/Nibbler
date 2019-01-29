@@ -35,6 +35,7 @@ class AudioManager
 {
 public:
 
+	AudioManager(void);
 	~AudioManager(void);
 
 	static AudioManager &	getInstance(void);
@@ -48,7 +49,6 @@ private:
 	std::vector<Mix_Music *>						_bgmClips;
 	std::unordered_map<std::string, Mix_Chunk *>	_sfxClips;
 
-	AudioManager(void);
 	AudioManager(const AudioManager & src);
 	AudioManager & operator=(const AudioManager & rhs);
 

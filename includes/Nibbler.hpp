@@ -3,6 +3,7 @@
 
 # include "Player.hpp"
 # include "direction.hpp"
+# include "event.hpp"
 
 # include <string>
 # include <iostream>
@@ -92,7 +93,7 @@ private:
 
 	Nibbler(int boardWidth, int boardHeight, int numPlayers);			// local game constructor
 	Nibbler(int boardWidth, int boardHeight, unsigned short port);		// online server constructor
-	Nibbler(std::string & ipAddress, unsigned short port);							// online client constructor
+	Nibbler(std::string & ipAddress, unsigned short port);				// online client constructor
 
 	Nibbler(void);
 	Nibbler(const Nibbler & src);
@@ -110,6 +111,7 @@ private:
 
 	void				_loop(void);
 	void				_handleEvents(void);
+	void				_processEvent(e_event event);
 	// void				_update(void);
 	void				_render(void);
 	void				_displayGameStatus(void);

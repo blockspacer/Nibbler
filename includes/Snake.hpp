@@ -20,6 +20,7 @@ public:
 	int										getID(void) const;
 	int										getLength(void) const;
 	SnakeCell &								getHeadCell(void) const;
+	int										getPlayerID(void) const;
 	
 	void									update(void);
 	void									turnLeft(void);

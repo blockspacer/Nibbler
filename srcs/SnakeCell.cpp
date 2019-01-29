@@ -16,19 +16,33 @@ SnakeCell::~SnakeCell(void)
 
 }
 
-Snake &		SnakeCell::getSnake(void) const
+Snake &			SnakeCell::getSnake(void) const
 {
 	return (this->_snake);
 }
 
-e_direction	SnakeCell::getDirection(void) const
+e_direction		SnakeCell::getDirection(void) const
 {
 	return (this->_direction);
 }
 
-bool		SnakeCell::isHead(void) const
+bool			SnakeCell::isHead(void) const
 {
 	return (this->_isHead);
+}
+
+t_cell_data		SnakeCell::getCellData(void) const
+{
+	t_cell_data	data;
+
+	data.type = CELL_SNAKE;
+	data.posX = this->_x;
+	data.posY = this->_y;
+	data.isPlayer0 = this->getSnake().getPlayerID() == 0;
+	data.isHead = this->_isHead;
+	data.isDead = this->getSnake().isDead();
+	data.direction = this->getDirection();
+	return (data);
 }
 
 void		SnakeCell::setDirection(e_direction direction)

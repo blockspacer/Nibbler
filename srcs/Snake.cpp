@@ -19,7 +19,7 @@ Snake::Snake(Player & player, Board & board, int x, int y, e_direction direction
 }
 
 // build a snake 4 units long
-void		Snake::_initSnakeCells(int x, int y)
+void				Snake::_initSnakeCells(int x, int y)
 {
 	this->_snakeCells.push_back(std::make_shared<SnakeCell>(x, y, *this, this->_nextDirection, true, 0));
 	switch (this->_nextDirection)
@@ -47,7 +47,7 @@ void		Snake::_initSnakeCells(int x, int y)
 	}
 }
 
-void		Snake::_registerSnakeCellsToBoard(void)
+void				Snake::_registerSnakeCellsToBoard(void)
 {
 	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
 	{
@@ -59,17 +59,17 @@ void		Snake::_registerSnakeCellsToBoard(void)
 
 Snake::~Snake(void) { }
 
-bool		Snake::isDead(void) const
+bool				Snake::isDead(void) const
 {
 	return (this->_isDead);
 }
 
-int			Snake::getID(void) const
+int					Snake::getID(void) const
 {
 	return (this->_player.getID());
 }
 
-int			Snake::getLength(void) const
+int					Snake::getLength(void) const
 {
 	return (static_cast<int>(this->_snakeCells.size()));
 }
@@ -79,7 +79,12 @@ SnakeCell &			Snake::getHeadCell(void) const
 	return (*this->_snakeCells[0]);
 }
 
-void		Snake::_getNextXY(int & nextX, int & nextY) const
+int					Snake::getPlayerID(void) const
+{
+	return (this->_player.getID());
+}
+
+void				Snake::_getNextXY(int & nextX, int & nextY) const
 {
 	std::shared_ptr<SnakeCell>	headCell = this->_snakeCells.front();
 	int							headX = headCell->getX();
@@ -106,14 +111,14 @@ void		Snake::_getNextXY(int & nextX, int & nextY) const
 	}
 }
 
-void		Snake::update(void)
+void				Snake::update(void)
 {
 	if (this->_isDead)
 		return;
 
-	int		nextX;
-	int		nextY;
-	Cell *	nextCell;
+	int				nextX;
+	int				nextY;
+	Cell *			nextCell;
 
 	this->_getNextXY(nextX, nextY);
 	if (this->_board.isValidPosition(nextX, nextY))
@@ -127,10 +132,10 @@ void		Snake::update(void)
 		this->die();
 }
 
-void		Snake::_interactWithTarget(Cell & target)
+void				Snake::_interactWithTarget(Cell & target)
 {
-	int		targetX = target.getX();
-	int		targetY = target.getY();
+	int				targetX = target.getX();
+	int				targetY = target.getY();
 
 	// consume food, move there, grow 1 cell
 	if (dynamic_cast<FoodCell *>(&target))
@@ -153,12 +158,12 @@ void		Snake::_interactWithTarget(Cell & target)
 }
 
 
-void		Snake::_moveAndGrow(int newX, int newY, bool isGrowing)
+void				Snake::_moveAndGrow(int newX, int newY, bool isGrowing)
 {
-	int			oldX;
-	int			oldY;
-	e_direction	oldDirection;
-	e_direction	newDirection = this->_nextDirection;
+	int				oldX;
+	int				oldY;
+	e_direction		oldDirection;
+	e_direction		newDirection = this->_nextDirection;
 
 	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
 	{
@@ -181,7 +186,7 @@ void		Snake::_moveAndGrow(int newX, int newY, bool isGrowing)
 	}
 }
 
-void		Snake::turnLeft(void)
+void				Snake::turnLeft(void)
 {
 	e_direction		currentDirection = this->_snakeCells.front()->getDirection();
 
@@ -202,7 +207,7 @@ void		Snake::turnLeft(void)
 	}
 }
 
-void		Snake::turnRight(void)
+void				Snake::turnRight(void)
 {
 	e_direction		currentDirection = this->_snakeCells.front()->getDirection();
 
@@ -223,7 +228,7 @@ void		Snake::turnRight(void)
 	}
 }
 
-void		Snake::getHitAtIndex(size_t index)
+void				Snake::getHitAtIndex(size_t index)
 {
 	AudioManager::getInstance().playSFX("hurt");
 	for (size_t i = index; i < this->_snakeCells.size(); i++)
@@ -235,7 +240,7 @@ void		Snake::getHitAtIndex(size_t index)
 	this->_snakeCells.resize(index);
 }
 
-void		Snake::die(void)
+void				Snake::die(void)
 {
 	if (this->_isDead)
 		return;

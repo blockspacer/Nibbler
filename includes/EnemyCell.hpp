@@ -14,15 +14,16 @@ public:
 	EnemyCell(int x, int y, Enemy & enemy);
 	~EnemyCell(void);
 
-	int				getID(void) const;
-	e_direction		getDirection(void) const;
+	int						getID(void) const;
+	e_direction				getDirection(void) const;
+	virtual t_cell_data		getCellData(void) const;
 
-	virtual void	getHit(void);
+	virtual void			getHit(void);
 
 private:
 
-	Enemy &			_enemy;
-	int				_id;
+	Enemy &					_enemy;
+	int						_id;
 
 	EnemyCell(void);
 	EnemyCell(const EnemyCell & src);

@@ -153,7 +153,7 @@ void		Nibbler::_validateArgs(int boardWidth, int boardHeight, int numPlayers)
 
 #include <dlfcn.h>
 
-IModule *		createModule(std::string libName, std::string funcName, Nibbler & nibbler, Board & board, std::string title)
+IModule *		createModule(std::string libName, std::string funcName, int boardWidth, int boardHeight, std::string title)
 {
 	void *	dl_handle = dlopen(libName.c_str(), RTLD_LAZY | RTLD_LOCAL);
 
@@ -165,12 +165,17 @@ IModule *		createModule(std::string libName, std::string funcName, Nibbler & nib
 	if (func_ptr == nullptr)
 		throw NibblerException("dlsym() failed on " + libName + " : " + funcName);
 
-	typedef IModule *	(*func_t)(Nibbler &, Board &, std::string);
+	typedef IModule *	(*func_t)(int, int, std::string);
 	func_t				create = (func_t)(func_ptr);
 
 	dlclose(dl_handle);
 
-	return (create(nibbler, board, title));
+	IModule *			module = create(boardWidth, boardHeight, title);
+
+	if (module == nullptr)
+		throw NibblerException("createModule() failed on " + libName + " : " + funcName);
+
+	return (module);
 }
 
 void		Nibbler::_initModules(void)
@@ -180,37 +185,19 @@ void		Nibbler::_initModules(void)
 	titleModifier = this->_server != nullptr ? "Server" : this->_client != nullptr ? "Client" : "Local";
 	titleModifier = " (" + titleModifier + ")";
 
-	this->_modules[0] = createModule("myLibSFML.so", "createSFMLModule", *this, *this->_board, "SFML" + titleModifier);
+	this->_modules[0] = createModule("myLibSFML.so", "createSFMLModule", this->_board->getWidth(), this->_board->getHeight(), "SFML" + titleModifier);
 	this->_modules[0]->disable();
-	this->_modules[1] = createModule("myLibSDL.so", "createSDLModule", *this, *this->_board, "SDL" + titleModifier);
+
+	this->_modules[1] = createModule("myLibSDL.so", "createSDLModule", this->_board->getWidth(), this->_board->getHeight(), "SDL" + titleModifier);
 	this->_modules[1]->disable();
-	this->_modules[2] = createModule("myLibOpenGL.so", "createOpenGLModule", *this, *this->_board, "OpenGL" + titleModifier);
+
+	this->_modules[2] = createModule("myLibOpenGL.so", "createOpenGLModule", this->_board->getWidth(), this->_board->getHeight(), "OpenGL" + titleModifier);
 	this->_modules[2]->disable();
 
 	this->_moduleIndex = 0;
 	this->_modules[this->_moduleIndex]->enable();
 }
 
-
-
-/*
-void		Nibbler::_initModules(void)
-{
-	std::string		titleModifier;
-
-	titleModifier = this->_server != nullptr ? "Server" : this->_client != nullptr ? "Client" : "Local";
-	titleModifier = " (" + titleModifier + ")";
-
-	this->_modules[0] = new SFMLModule(*this->_board, "SFML" + titleModifier);
-	this->_modules[0]->disable();
-	this->_modules[1] = new SDLModule(*this->_board, "SDL" + titleModifier);
-	this->_modules[1]->disable();
-	this->_modules[2] = new OpenGLModule(*this->_board, "OpenGL" + titleModifier);
-	this->_modules[2]->disable();
-	this->_moduleIndex = 0;
-	this->_modules[this->_moduleIndex]->enable();
-}
-*/
 
 // need at least 7x7 board
 Snake *		Nibbler::_initSnakeFor1PGame(int playerIndex)
@@ -288,14 +275,6 @@ void		Nibbler::_loop(void)
 					this->_server->sendMessage(UPDATE_NOW);
 			}			
 		}
-
-		// if (t >= MS_PER_UPDATE)
-		// {
-		// 	this->_update();
-		// 	t -= MS_PER_UPDATE;
-		// }
-
-
 		this->_render();
 		// this->_displayGameStatus();
 	}
@@ -303,7 +282,47 @@ void		Nibbler::_loop(void)
 
 void		Nibbler::_handleEvents(void)
 {
-	this->_modules[this->_moduleIndex]->handleEvents();
+	IModule *				module = this->_modules[this->_moduleIndex];
+	std::vector<e_event>	events = module->getEvents();
+
+	for (e_event e : events)
+		this->_processEvent(e);
+}
+
+void		Nibbler::_processEvent(e_event event)
+{
+	switch (event)
+	{
+		case EVENT_TERMINATE:
+			this->terminate();
+			break;
+		case EVENT_P1_TURN_LEFT:
+			this->turnLeftP1();
+			break;
+		case EVENT_P1_TURN_RIGHT:
+			this->turnRightP1();
+			break;
+		case EVENT_P2_TURN_LEFT:
+			this->turnLeftP2();
+			break;
+		case EVENT_P2_TURN_RIGHT:
+			this->turnRightP2();
+			break;
+		case EVENT_START_NEW_ROUND:
+			this->startNewRound();
+			break;
+		case EVENT_SELECT_MODULE_1:
+			this->selectModule1();
+			break;
+		case EVENT_SELECT_MODULE_2:
+			this->selectModule2();
+			break;
+		case EVENT_SELECT_MODULE_3:
+			this->selectModule3();
+			break;
+		default:
+			break;
+	}
 }
 
 void		Nibbler::_update(void)
@@ -327,7 +346,7 @@ void		Nibbler::_update(void)
 		this->_enemies.end());
 
 	if (this->_client == nullptr)
-		this->_spawnEnemies();
+		; //this->_spawnEnemies();
 
 	this->_checkIfRoundIsOver();
 }
@@ -395,9 +414,21 @@ void		Nibbler::_spawnEnemies(void)
 
 
 
-void		Nibbler::_render(void)
+void			Nibbler::_render(void)
 {
-	this->_modules[this->_moduleIndex]->render();
+	IModule	*	module = this->_modules[this->_moduleIndex];
+
+	std::vector<t_cell_data>	cellData = this->_board->getCellData();
+
+	for (t_cell_data & data : cellData)
+	{
+		if (data.type == CELL_SNAKE)
+		{
+			data.isActivePlayer = (data.isPlayer0 && (this->_client == nullptr)) ||
+				(!data.isPlayer0 && (this->_client != nullptr));
+		}
+	}
+	module->render(cellData);
 }
 
 void		Nibbler::_checkIfRoundIsOver(void)

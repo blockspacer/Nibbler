@@ -8,45 +8,37 @@
 
 # define CELL_WIDTH				40
 
-class Nibbler;
-class Board;
-class Cell;
-class SnakeCell;
-class FoodCell;
-class EnemyCell;
-
 class SFMLModule : public IModule
 {
 public:
 
-	SFMLModule(Nibbler & nibbler, Board & board, std::string title);
+	SFMLModule(int boardWidth, int boardHeight, std::string title);
 	~SFMLModule(void);
 
-	virtual void				disable(void);
-	virtual void				enable(void);
+	virtual void					disable(void);
+	virtual void					enable(void);
 
-	virtual void				handleEvents(void);
-	virtual void				render(void);
+	virtual std::vector<e_event>	getEvents(void);
+	virtual void					render(std::vector<t_cell_data> cellData);
 
 private:
 
-	Nibbler &					_nibbler;
-	Board &						_board;
-	std::string					_title;
+	int								_boardWidth;
+	int								_boardHeight;
+	std::string						_title;
 
-	sf::RenderWindow			_renderWindow;
+	sf::RenderWindow				_renderWindow;
 
 	SFMLModule(void);
 	SFMLModule(const SFMLModule & src);
 	SFMLModule & operator=(const SFMLModule & rhs);
 
-	void						_handleKeyPressEvent(sf::Event & event);
+	void							_handleKeyPressEvent(std::vector<e_event> & myEvents, sf::Event & event);
 
-	void						_renderCell(Cell & cell);
-	void						_renderSnakeCell(SnakeCell & snakeCell, sf::RectangleShape & rect);
-	void						_renderFoodCell(FoodCell & foodCell, sf::RectangleShape & rect);
-	void						_renderEnemyCell(EnemyCell & enemyCell, sf::RectangleShape & rect);
-
+	void							_renderCell(t_cell_data cellData);
+	void							_renderSnakeCell(t_cell_data & cellData, sf::RectangleShape & rect);
+	void							_renderFoodCell(t_cell_data & cellData, sf::RectangleShape & rect);
+	void							_renderEnemyCell(t_cell_data & cellData, sf::RectangleShape & rect);
 
 };
 

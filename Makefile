@@ -74,10 +74,53 @@ main.cpp
 OBJDIR := objs/
 OBJS := $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 
+REMAINING_OBJS := \
+objs/AudioManager.o \
+objs/Board.o \
+objs/Cell.o \
+objs/Client.o \
+objs/Enemy.o \
+objs/EnemyCell.o \
+objs/FoodCell.o \
+objs/NetworkEntity.o \
+objs/Nibbler.o \
+objs/NibblerException.o \
+objs/ParsingException.o \
+objs/Player.o \
+objs/ResourceManager.o \
+objs/Server.o \
+objs/Snake.o \
+objs/SnakeCell.o \
+objs/direction.o \
+objs/main.o
+
 MY_SFML_LIB := myLibSFML.so
 MY_SDL_LIB := myLibSDL.so
-MY_OpenGL_LIB := myLibOpenGL.so
+MY_OPENGL_LIB := myLibOpenGL.so
 
+MY_AUDIO_LIB := myLibAudio.so
+
+MY_SFML_HEADERS := -I $(INCLUDES) -I $(SFML_INC)
+
+MY_SFML_OBJS := \
+objs/SFMLModule.o
+
+MY_SDL_OBJS := \
+objs/NibblerException.o \
+objs/ResourceManager.o \
+objs/SDLModule.o
+
+MY_OPENGL_OBJS := \
+objs/Model.o \
+objs/NibblerException.o \
+objs/ResourceManager.o \
+objs/OpenGLModule.o \
+objs/Shader.o
+
+MY_AUDIO_OBJS := \
+objs/AudioManager.o \
+objs/NibblerException.o \
+objs/ResourceManager.o
 
 # all: sdl2 sdl2_image sdl2_ttf sdl2_mixer sfml $(TARGET)
 all: $(TARGET)
@@ -85,55 +128,45 @@ all: $(TARGET)
 
 $(MY_SFML_LIB):
 	@echo "\x1b[1mBuilding $(MY_SFML_LIB)...\x1b[0m"
-	$(CC) -shared -fPIC $(HEADERS) \
-		-o $(MY_SFML_LIB) $(OBJS) \
-		$(SDL2_LINK) \
-		$(SDL2_IMAGE_LINK) \
-		$(SDL2_TTF_LINK) \
-		$(SDL2_MIXER_LINK) \
-		$(SFML_LINK) \
-		$(GLEW_LINK) \
-		-framework OpenGL -g -fsanitize=address
+	$(CC) -shared -fPIC $(MY_SFML_HEADERS) \
+		-o $(MY_SFML_LIB) $(MY_SFML_OBJS) \
+		$(SFML_LINK) -g -fsanitize=address
 
 $(MY_SDL_LIB):
 	@echo "\x1b[1mBuilding $(MY_SDL_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
-		-o $(MY_SDL_LIB) $(OBJS) \
+		-o $(MY_SDL_LIB) $(MY_SDL_OBJS) \
+		$(SDL2_LINK) \
+		$(SDL2_IMAGE_LINK) -g -fsanitize=address
+
+$(MY_OPENGL_LIB):
+	@echo "\x1b[1mBuilding $(MY_OPENGL_LIB)...\x1b[0m"
+	$(CC) -shared -fPIC $(HEADERS) \
+		-o $(MY_OPENGL_LIB) $(MY_OPENGL_OBJS) \
 		$(SDL2_LINK) \
 		$(SDL2_IMAGE_LINK) \
-		$(SDL2_TTF_LINK) \
-		$(SDL2_MIXER_LINK) \
-		$(SFML_LINK) \
 		$(GLEW_LINK) \
 		-framework OpenGL -g -fsanitize=address
 
-$(MY_OpenGL_LIB):
-	@echo "\x1b[1mBuilding $(MY_OpenGL_LIB)...\x1b[0m"
+$(MY_AUDIO_LIB):
+	@echo "\x1b[1mBuilding $(MY_AUDIO_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
-		-o $(MY_OpenGL_LIB) $(OBJS) \
+		-o $(MY_AUDIO_LIB) $(MY_AUDIO_OBJS) \
 		$(SDL2_LINK) \
-		$(SDL2_IMAGE_LINK) \
-		$(SDL2_TTF_LINK) \
 		$(SDL2_MIXER_LINK) \
-		$(SFML_LINK) \
-		$(GLEW_LINK) \
 		-framework OpenGL -g -fsanitize=address
 
 $(OBJDIR)%.o: $(SRCSDIR)%.cpp
 	@mkdir -p $(OBJDIR)
 	$(CC) -c $(CFLAGS) $(HEADERS) $< -o $@
 
-$(TARGET): $(OBJS) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB)
+$(TARGET): $(OBJS) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OPENGL_LIB) $(MY_AUDIO_LIB)
 	@echo "\x1b[1mBuilding $(TARGET)...\x1b[0m"
-	$(CC) -o $(TARGET) $(OBJS) \
-		$(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB) \
+	$(CC) -o $(TARGET) $(REMAINING_OBJS) \
+		$(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OPENGL_LIB) $(MY_AUDIO_LIB) \
 		$(SDL2_LINK) \
-		$(SDL2_IMAGE_LINK) \
-		$(SDL2_TTF_LINK) \
 		$(SDL2_MIXER_LINK) \
-		$(SFML_LINK) \
-		$(GLEW_LINK) \
-		-framework OpenGL -g -fsanitize=address
+		$(SFML_LINK) -g -fsanitize=address
 	@echo "\x1b[1mBuild finished!!\x1b[0m"
 
 clean:
@@ -143,7 +176,7 @@ clean:
 
 fclean: clean
 	@echo "\x1b[1mFcleaning...\x1b[0m"
-	/bin/rm -f $(TARGET) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OpenGL_LIB)
+	/bin/rm -f $(TARGET) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OPENGL_LIB) $(MY_AUDIO_LIB)
 	@echo
 
 re: fclean all

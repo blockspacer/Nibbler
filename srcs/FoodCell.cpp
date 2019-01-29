@@ -17,14 +17,24 @@ FoodCell::~FoodCell(void)
 	
 }
 
-int		FoodCell::getID(void) const
+int				FoodCell::getID(void) const
 {
 	return (this->_id);
 }
 
-void	FoodCell::getHit(void)
+t_cell_data		FoodCell::getCellData(void) const
 {
-	// this->_board.generateFood();
+	t_cell_data	data;
+
+	data.type = CELL_FOOD;
+	data.posX = this->_x;
+	data.posY = this->_y;
+	data.id = this->_id;
+	return (data);
+}
+
+void			FoodCell::getHit(void)
+{
 	this->_board.clearCell(this->_x, this->_y);
 	Nibbler::getInstance().spawnFood();
 }

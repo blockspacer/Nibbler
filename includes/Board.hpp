@@ -2,6 +2,8 @@
 # define BOARD_HPP
 
 # include "Cell.hpp"
+# include "cell_data.hpp"
+
 # include <vector>
 
 class FoodCell;
@@ -19,6 +21,8 @@ public:
 
 	bool		isEmptyCell(int x, int y) const;
 	bool		isValidPosition(int x, int y) const;
+
+	std::vector<t_cell_data>	getCellData(void) const;
 
 	void		setCell(const std::shared_ptr<Cell> & cell);
 	void		setCell(const std::shared_ptr<Cell> & cell, int x, int y);

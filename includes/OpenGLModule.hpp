@@ -19,82 +19,76 @@
 # include <glm/gtx/string_cast.hpp>
 
 class Shader;
-class Nibbler;
-class Board;
-class Cell;
-class SnakeCell;
-class FoodCell;
-class EnemyCell;
 class Model;
 
 class OpenGLModule : public IModule
 {
 public:
 
-	OpenGLModule(Nibbler & nibbler, Board & board, std::string title);
+	OpenGLModule(int boardWidth, int boardHeight, std::string title);
 	~OpenGLModule(void);
 
-	virtual void			disable(void);
-	virtual void			enable(void);
+	virtual void					disable(void);
+	virtual void					enable(void);
 
-	virtual void			handleEvents(void);
-	virtual void			render(void);
+	virtual std::vector<e_event>	getEvents(void);
+	virtual void					render(std::vector<t_cell_data> cellData);
 
 private:
 
-	Nibbler &				_nibbler;
-	Board &					_board;
+	int								_boardWidth;
+	int								_boardHeight;
 
-	SDL_Window *			_window;
-	SDL_GLContext			_context;
+	SDL_Window *					_window;
+	SDL_GLContext					_context;
 	
-	Shader *				_shader;
+	Shader *						_shader;
 
-	Model *					_floorModel;
-	Model *					_wallModel;
-	Model *					_snakeHeadModel1;
-	Model *					_snakeHeadModel2;
-	Model *					_snakeBodyModel1;
-	Model *					_snakeBodyModel2;
-	Model *					_snakeDeadModel;
-	Model *					_foodModel;
-	Model *					_enemyModel;
+	Model *							_floorModel;
+	Model *							_wallModel;
+	Model *							_snakeHeadModel1;
+	Model *							_snakeHeadModel2;
+	Model *							_snakeBodyModel1;
+	Model *							_snakeBodyModel2;
+	Model *							_snakeDeadModel;
+	Model *							_foodModel;
+	Model *							_enemyModel;
 
-	glm::mat4				_transformMatrix;
-	glm::mat4				_viewMatrix;
-	glm::mat4				_projectionMatrix;
+	glm::mat4						_transformMatrix;
+	glm::mat4						_viewMatrix;
+	glm::mat4						_projectionMatrix;
 
-	glm::vec3				_lightPosition;
+	glm::vec3						_lightPosition;
 
-	bool					_isWireframe;
-	bool					_isShaded;
-	bool					_isFirstPersonView;
+	bool							_isWireframe;
+	bool							_isShaded;
+	bool							_isFirstPersonView;
 
 	OpenGLModule(void);
 	OpenGLModule(const OpenGLModule & src);
 	OpenGLModule & operator=(const OpenGLModule & rhs);
 
-	void					_initOpenGLStuff(std::string & title);
-	void					_initModels(void);
-	void					_initLightPosition(void);
+	void							_initOpenGLStuff(std::string & title);
+	void							_initModels(void);
+	void							_initLightPosition(void);
 
-	void					_handleKeyPressEvent(SDL_Event & event);
+	void							_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event);
 
-	void					_resetGraphicsParameters(void);
-	void					_toggleWireframeMode(void);
-	void					_toggleShading(void);
-	void					_toggleView(void);
+	void							_resetGraphicsParameters(void);
+	void							_toggleWireframeMode(void);
+	void							_toggleShading(void);
+	void							_toggleView(void);
 
-	void					_renderFloorAndWalls(void);
-	void					_renderCell(Cell & cell);
-	void					_renderSnakeCell(SnakeCell & snakeCell);
-	void					_renderFoodCell(FoodCell & foodCell);
-	void					_renderEnemyCell(EnemyCell & enemyCell);
+	void							_renderFloorAndWalls(void);
+	void							_renderCell(t_cell_data cellData);
+	void							_renderSnakeCell(t_cell_data & cellData);
+	void							_renderFoodCell(t_cell_data & cellData);
+	void							_renderEnemyCell(t_cell_data & cellData);
 
-	void					_drawModelAtPosition(Model & model, int x, int y);
-	void					_drawModelAtPositionFacing(Model & model, int x, int y, e_direction direction);
+	void							_drawModelAtPosition(Model & model, int x, int y);
+	void							_drawModelAtPositionFacing(Model & model, int x, int y, e_direction direction);
 
-	void					_updateViewMatrix(void);
+	void							_updateViewMatrix(t_cell_data & activeHead);
 
 };
 

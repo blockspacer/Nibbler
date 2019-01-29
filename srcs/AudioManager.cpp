@@ -2,15 +2,62 @@
 #include "ResourceManager.hpp"
 #include "NibblerException.hpp"
 
-AudioManager &	AudioManager::getInstance(void)
+#include <dlfcn.h>
+
+extern "C"
 {
-	static AudioManager instance;
+	AudioManager *		createAudioModule(void)
+	{
+		return (new AudioManager());
+	}
+}
+
+AudioManager *			createAudioManager(void)
+{
+	const std::string	libName = "myLibAudio.so";
+	const std::string	funcName = "createAudioModule";
+
+	void *	dl_handle = dlopen(libName.c_str(), RTLD_LAZY | RTLD_LOCAL);
+
+	if (dl_handle == nullptr)
+		throw NibblerException("dlopen() failed on " + libName);
+
+	void *	func_ptr = dlsym(dl_handle, funcName.c_str());
+
+	if (func_ptr == nullptr)
+		throw NibblerException("dlsym() failed on " + libName + " : " + funcName);
+
+	typedef AudioManager *	(*func_t)(void);
+	func_t					create = (func_t)(func_ptr);
+
+	dlclose(dl_handle);
+
+	AudioManager *		instance = create();
+
+	if (instance == nullptr)
+		throw NibblerException("AudioManager::_createAudioManager() failed");
 
 	return (instance);
 }
 
+AudioManager &	AudioManager::getInstance(void)
+{
+	static AudioManager *	instance = createAudioManager();
+
+	return (*instance);
+}
+
+// AudioManager &	AudioManager::getInstance(void)
+// {
+// 	static AudioManager instance;
+
+// 	return (instance);
+// }
+
 AudioManager::AudioManager(void)
 {
+	printf("AudioManager() \n");
+
 	if (SDL_Init(SDL_INIT_AUDIO))
 		throw NibblerException("SDL_Init() failed");
 	
@@ -47,6 +94,8 @@ AudioManager::AudioManager(void)
 
 AudioManager::~AudioManager(void)
 {
+	printf("~AudioManager() \n");
+
 	for (size_t i = 0; i < this->_bgmClips.size(); i++)
 		Mix_FreeMusic(this->_bgmClips[i]);
 	for (const auto & clip : this->_sfxClips)

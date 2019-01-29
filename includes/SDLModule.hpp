@@ -33,61 +33,54 @@
 # define ENEMY_IMAGE_6			"images/enemy/duck.png"
 # define ENEMY_IMAGE_7			"images/enemy/pig.png"
 
-class Nibbler;
-class Board;
-class Cell;
-class SnakeCell;
-class FoodCell;
-class EnemyCell;
-
 class SDLModule : public IModule
 {
 public:
 
-	SDLModule(Nibbler & nibbler, Board & board, std::string title);
+	SDLModule(int boardWidth, int boardHeight, std::string title);
 	~SDLModule(void);
 
-	virtual void				disable(void);
-	virtual void				enable(void);
+	virtual void					disable(void);
+	virtual void					enable(void);
 
-	virtual void				handleEvents(void);
-	virtual void				render(void);
+	virtual std::vector<e_event>	getEvents(void);
+	virtual void					render(std::vector<t_cell_data> cellData);
 
 private:
 
-	Nibbler &					_nibbler;
-	Board &						_board;
+	int								_boardWidth;
+	int								_boardHeight;
 
-	bool						_isGridShown;
+	bool							_isGridShown;
 
-	SDL_Window *				_window;
-	SDL_Renderer *				_renderer;
-	SDL_GLContext				_context;
+	SDL_Window *					_window;
+	SDL_Renderer *					_renderer;
+	SDL_GLContext					_context;
 
-	SDL_Texture *				_snakeHeadP1Texture;
-	SDL_Texture *				_snakeBodyP1Texture;
-	SDL_Texture *				_snakeHeadP2Texture;
-	SDL_Texture *				_snakeBodyP2Texture;
-	SDL_Texture *				_snakeDeadTexture;
+	SDL_Texture *					_snakeHeadP1Texture;
+	SDL_Texture *					_snakeBodyP1Texture;
+	SDL_Texture *					_snakeHeadP2Texture;
+	SDL_Texture *					_snakeBodyP2Texture;
+	SDL_Texture *					_snakeDeadTexture;
 
-	std::vector<SDL_Texture *>	_foodTextures;
-	std::vector<SDL_Texture *>	_enemyTextures;
+	std::vector<SDL_Texture *>		_foodTextures;
+	std::vector<SDL_Texture *>		_enemyTextures;
 
 	SDLModule(void);
 	SDLModule(const SDLModule & src);
 	SDLModule &	operator=(const SDLModule & rhs);
 
-	SDL_Texture *				_initTexture(std::string filename);
+	SDL_Texture *					_initTexture(std::string filename);
 
-	void						_handleKeyPressEvent(SDL_Event & event);
+	void							_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event);
 
-	void						_toggleGrid(void);
-	void						_drawGrid(void);
+	void							_toggleGrid(void);
+	void							_drawGrid(void);
 
-	void						_renderCell(Cell & cell);
-	void						_renderSnakeCell(SnakeCell & snakeCell, SDL_Rect & dstRect);
-	void						_renderFoodCell(FoodCell & foodCell, SDL_Rect & dstRect);
-	void						_renderEnemyCell(EnemyCell & enemyCell, SDL_Rect & dstRect);
+	void							_renderCell(t_cell_data cellData);
+	void							_renderSnakeCell(t_cell_data & cellData, SDL_Rect & dstRect);
+	void							_renderFoodCell(t_cell_data & cellData, SDL_Rect & dstRect);
+	void							_renderEnemyCell(t_cell_data & cellData, SDL_Rect & dstRect);
 
 };
 
