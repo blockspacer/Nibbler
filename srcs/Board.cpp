@@ -113,6 +113,9 @@ FoodCell &	Board::generateFood(void)
 
 	this->_findEmptyPosition(emptyX, emptyY);
 	this->setCell(std::make_shared<FoodCell>(emptyX, emptyY, *this));
+
+	printf("Board::generateFood(): spawned food at x=%d, y=%d\n", emptyX, emptyY);
+
 	return (static_cast<FoodCell &>(*this->getCell(emptyX, emptyY)));
 }
 
