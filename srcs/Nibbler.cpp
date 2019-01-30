@@ -265,7 +265,6 @@ void						Nibbler::_loop(void)
 			}			
 		}
 		this->_render();
-		this->_displayGameStatus();		// PUT IT BACK YO
 	}
 }
 
@@ -316,6 +315,8 @@ void		Nibbler::_processEvent(e_event & event)
 
 void		Nibbler::update(void)
 {
+	this->_displayGameStatus();
+
 	if (this->_isRoundOver)
 		return;
 
