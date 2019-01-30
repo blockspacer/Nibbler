@@ -156,9 +156,5 @@ int					main(int argc, char * argv[])
 		std::cout << "Exception: " << exception.what() << std::endl;	
 	}
 
-	// printf("CHECK LEAKS MOTHERFUCKER \n");
-	// while (true)
-	// 	;
-
 	return (EXIT_SUCCESS);
 }
