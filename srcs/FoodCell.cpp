@@ -17,14 +17,14 @@ FoodCell::~FoodCell(void)
 	
 }
 
-int				FoodCell::getID(void) const
+int					FoodCell::getID(void) const
 {
 	return (this->_id);
 }
 
-t_cell_data		FoodCell::getCellData(void) const
+t_cell_data			FoodCell::getCellData(void) const
 {
-	t_cell_data	data;
+	t_cell_data		data;
 
 	data.type = CELL_FOOD;
 	data.posX = this->_x;
@@ -33,7 +33,7 @@ t_cell_data		FoodCell::getCellData(void) const
 	return (data);
 }
 
-void			FoodCell::getHit(void)
+void				FoodCell::getHit(void)
 {
 	Nibbler::getInstance().spawnFood();
 	this->_board.clearCell(this->_x, this->_y);

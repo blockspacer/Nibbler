@@ -16,7 +16,6 @@ enum	e_event
 	EVENT_SELECT_MODULE_1,
 	EVENT_SELECT_MODULE_2,
 	EVENT_SELECT_MODULE_3,
-
 };
 
 #endif

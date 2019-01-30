@@ -6,7 +6,7 @@
 
 extern "C"
 {
-	IModule *	createOpenGLModule(int boardWidth, int boardHeight, std::string title)
+	IModule *		createOpenGLModule(int boardWidth, int boardHeight, std::string title)
 	{
 		return (new OpenGLModule(boardWidth, boardHeight, title));
 	}
@@ -16,8 +16,6 @@ OpenGLModule::OpenGLModule(int boardWidth, int boardHeight, std::string title) :
 	_boardWidth(boardWidth),
 	_boardHeight(boardHeight)
 {
-	printf("OpenGLModule()\n");
-
 	this->_initOpenGLStuff(title);
 	this->_shader = new Shader();
 	this->_initModels();
@@ -25,7 +23,7 @@ OpenGLModule::OpenGLModule(int boardWidth, int boardHeight, std::string title) :
 	this->_resetGraphicsParameters();
 }
 
-void			OpenGLModule::_initOpenGLStuff(std::string & title)
+void				OpenGLModule::_initOpenGLStuff(std::string & title)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING))
 		throw NibblerException("SDL_Init() failed");
@@ -52,12 +50,12 @@ void			OpenGLModule::_initOpenGLStuff(std::string & title)
 	glEnable(GL_DEPTH_TEST);
 }
 
-void			OpenGLModule::_initModels(void)
+void				OpenGLModule::_initModels(void)
 {
-	glm::mat4	tempMatrix;
+	glm::mat4		tempMatrix;
 
-	float		floorScaleX = this->_boardWidth + 2.0f;
-	float		floorScaleY = this->_boardHeight + 2.0f;
+	float			floorScaleX = this->_boardWidth + 2.0f;
+	float			floorScaleY = this->_boardHeight + 2.0f;
 
 	this->_floorModel = new Model("models/square.obj", "models/doge_rainbow.jpg");
 	this->_floorModel->setScaleMatrix(glm::scale(glm::mat4(1.0f),
@@ -100,15 +98,15 @@ void				OpenGLModule::_initLightPosition(void)
 	float			xCenter = this->_boardWidth / 2.0f;
 	float			yCenter = -this->_boardHeight / 2.0f;
 
-	int		largestSide = std::max(this->_boardWidth, this->_boardHeight);
-	float	zDist = largestSide / atan(glm::radians(45.0f));
+	int				largestSide = std::max(this->_boardWidth, this->_boardHeight);
+	float			zDist = largestSide / atan(glm::radians(45.0f));
+	
 	zDist /= 8.0f;
-
 	this->_lightPosition = glm::vec3(xCenter, yCenter, -zDist);
 	this->_shader->setVector3("light_position", glm::value_ptr(this->_lightPosition));
 }
 
-void			OpenGLModule::_resetGraphicsParameters(void)
+void				OpenGLModule::_resetGraphicsParameters(void)
 {
 	this->_isWireframe = false;
 	glPolygonMode(GL_FRONT_AND_BACK, this->_isWireframe ? GL_LINE : GL_FILL);
@@ -121,8 +119,6 @@ void			OpenGLModule::_resetGraphicsParameters(void)
 
 OpenGLModule::~OpenGLModule(void)
 {
-	printf("~OpenGLModule()\n");
-
 	delete this->_floorModel;
 	delete this->_wallModel;
 	delete this->_snakeHeadModel1;
@@ -141,15 +137,13 @@ OpenGLModule::~OpenGLModule(void)
 	SDL_Quit();
 }
 
-void			OpenGLModule::disable(void)
+void				OpenGLModule::disable(void)
 {
-	// printf("OpenGLModule: disable()\n");
 	SDL_HideWindow(this->_window);
 }
 
-void			OpenGLModule::enable(void)
+void				OpenGLModule::enable(void)
 {
-	// printf("OpenGLModule: enable()\n");
 	SDL_GL_MakeCurrent(this->_window, this->_context);
 	SDL_ShowWindow(this->_window);
 }
@@ -170,7 +164,7 @@ std::vector<e_event>		OpenGLModule::getEvents(void)
 	return (myEvents);
 }
 
-void		OpenGLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event)
+void				OpenGLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event)
 {
 	switch (event.key.keysym.sym)
 	{
@@ -219,24 +213,24 @@ void		OpenGLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Ev
 			break;
 	}
 }
-void			OpenGLModule::_toggleWireframeMode(void)
+void				OpenGLModule::_toggleWireframeMode(void)
 {
 	this->_isWireframe = !this->_isWireframe;
 	glPolygonMode(GL_FRONT_AND_BACK, this->_isWireframe ? GL_LINE : GL_FILL);
 }
 
-void			OpenGLModule::_toggleShading(void)
+void				OpenGLModule::_toggleShading(void)
 {
 	this->_isShaded = !this->_isShaded;
 	this->_shader->setBool("is_shaded", this->_isShaded);
 }
 
-void			OpenGLModule::_toggleView(void)
+void				OpenGLModule::_toggleView(void)
 {
 	this->_isFirstPersonView = !this->_isFirstPersonView;
 }
 
-void			OpenGLModule::_drawModelAtPosition(Model & model, int x, int y)
+void				OpenGLModule::_drawModelAtPosition(Model & model, int x, int y)
 {
 	this->_shader->setMatrix("projection_matrix", glm::value_ptr(this->_projectionMatrix));
 	this->_shader->setMatrix("view_matrix", glm::value_ptr(this->_viewMatrix));
@@ -249,9 +243,9 @@ void			OpenGLModule::_drawModelAtPosition(Model & model, int x, int y)
 	model.draw();
 }
 
-void			OpenGLModule::_drawModelAtPositionFacing(Model & model, int x, int y, e_direction direction)
+void				OpenGLModule::_drawModelAtPositionFacing(Model & model, int x, int y, e_direction direction)
 {
-	glm::mat4	rotationMatrix;
+	glm::mat4		rotationMatrix;
 
 	switch (direction)
 	{
@@ -293,7 +287,7 @@ t_cell_data &		findActivePlayerSnakeHeadCell(std::vector<t_cell_data> & cellData
 	throw NibblerException("findActivePlayerSnakeHeadCell() failed");
 }
 
-void			OpenGLModule::render(std::vector<t_cell_data> cellData)
+void				OpenGLModule::render(std::vector<t_cell_data> cellData)
 {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -362,7 +356,7 @@ void				OpenGLModule::_updateViewMatrix(t_cell_data & activeHead)
 	}
 }
 
-void			OpenGLModule::_renderFloorAndWalls(void)
+void				OpenGLModule::_renderFloorAndWalls(void)
 {
 	static float	floorX = this->_boardWidth / 2.0f;
 	static float	floorY = this->_boardHeight / 2.0f;
@@ -384,7 +378,7 @@ void			OpenGLModule::_renderFloorAndWalls(void)
 }
 
 
-void			OpenGLModule::_renderCell(t_cell_data & cellData)
+void				OpenGLModule::_renderCell(t_cell_data & cellData)
 {
 	switch (cellData.type)
 	{
@@ -402,9 +396,9 @@ void			OpenGLModule::_renderCell(t_cell_data & cellData)
 	}
 }
 
-void			OpenGLModule::_renderSnakeCell(t_cell_data & cellData)
+void				OpenGLModule::_renderSnakeCell(t_cell_data & cellData)
 {
-	Model *		model;
+	Model *			model;
 
 	// Player dieded
 	if (cellData.isDead && cellData.isHead)
@@ -428,21 +422,13 @@ void			OpenGLModule::_renderSnakeCell(t_cell_data & cellData)
 	this->_drawModelAtPositionFacing(*model, cellData.posX, cellData.posY, cellData.direction);
 }
 
-void			OpenGLModule::_renderFoodCell(t_cell_data & cellData)
+void				OpenGLModule::_renderFoodCell(t_cell_data & cellData)
 {
 	this->_drawModelAtPosition(*this->_foodModel, cellData.posX, cellData.posY);
 }
 
-void			OpenGLModule::_renderEnemyCell(t_cell_data & cellData)
+void				OpenGLModule::_renderEnemyCell(t_cell_data & cellData)
 {
 	this->_drawModelAtPositionFacing(*this->_enemyModel, cellData.posX, cellData.posY, cellData.direction);
 }
-
-
-
-
-
-
-
-
 

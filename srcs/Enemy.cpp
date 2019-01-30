@@ -25,30 +25,30 @@ Enemy::~Enemy(void)
 	
 }
 
-int				Enemy::getID(void) const
+int					Enemy::getID(void) const
 {
 	return (this->_id);
 }
 
-bool			Enemy::isDead(void) const
+bool				Enemy::isDead(void) const
 {
 	return (this->_isDead);
 }
 
-e_direction		Enemy::getDirection(void) const
+e_direction			Enemy::getDirection(void) const
 {
 	return (this->_direction);
 }
 
-EnemyCell &		Enemy::getEnemyCell(void) const
+EnemyCell &			Enemy::getEnemyCell(void) const
 {
 	return (*this->_enemyCell);
 }
 
-void			Enemy::_getNextXY(int & nextX, int & nextY) const
+void				Enemy::_getNextXY(int & nextX, int & nextY) const
 {
-	int			currentX = this->_enemyCell->getX();
-	int			currentY = this->_enemyCell->getY();
+	int				currentX = this->_enemyCell->getX();
+	int				currentY = this->_enemyCell->getY();
 
 	switch(this->_direction)
 	{
@@ -71,17 +71,17 @@ void			Enemy::_getNextXY(int & nextX, int & nextY) const
 	}
 }
 
-void			Enemy::update(void)
+void				Enemy::update(void)
 {
 	if (this->_isDead)
 		return;
 
-	int			currentX = this->_enemyCell->getX();
-	int			currentY = this->_enemyCell->getY();
-	int			nextX;
-	int			nextY;
-	Cell *		nextCell;
-	SnakeCell *	snakeCell;
+	int				currentX = this->_enemyCell->getX();
+	int				currentY = this->_enemyCell->getY();
+	int				nextX;
+	int				nextY;
+	Cell *			nextCell;
+	SnakeCell *		snakeCell;
 
 	this->_getNextXY(nextX, nextY);
 	this->_board.clearCell(currentX, currentY);
@@ -90,6 +90,7 @@ void			Enemy::update(void)
 		if ((nextCell = this->_board.getCell(nextX, nextY)))
 			nextCell->getHit();
 
+		nextCell = this->_board.getCell(nextX, nextY);
 		if (!((snakeCell = dynamic_cast<SnakeCell *>(nextCell)) && snakeCell->isHead()))
 			this->_board.setCell(this->_enemyCell, nextX, nextY);
 		else

@@ -8,30 +8,30 @@
 # include <SDL.h>
 # include <SDL_image.h>
 
-# define IMG_FLAGS				(IMG_INIT_JPG | IMG_INIT_PNG)
+# define IMG_FLAGS					(IMG_INIT_JPG | IMG_INIT_PNG)
 
-# define SNAKE_HEAD_P1_IMAGE	"images/snake/woman_shrug_N.png"
-# define SNAKE_BODY_P1_IMAGE	"images/snake/dress_N.png"
+# define SNAKE_HEAD_P1_IMAGE		"images/snake/woman_shrug_N.png"
+# define SNAKE_BODY_P1_IMAGE		"images/snake/dress_N.png"
 
-# define SNAKE_HEAD_P2_IMAGE	"images/snake/woman_ok_N.png"
-# define SNAKE_BODY_P2_IMAGE	"images/snake/kimono_N.png"
+# define SNAKE_HEAD_P2_IMAGE		"images/snake/woman_ok_N.png"
+# define SNAKE_BODY_P2_IMAGE		"images/snake/kimono_N.png"
 
-# define SNAKE_DEAD_IMAGE		"images/snake/skull_N.png"
+# define SNAKE_DEAD_IMAGE			"images/snake/skull_N.png"
 
-# define FOOD_IMAGE_0			"images/food/burger.png"
-# define FOOD_IMAGE_1			"images/food/burrito.png"
-# define FOOD_IMAGE_2			"images/food/hot_dog.png"
-# define FOOD_IMAGE_3			"images/food/pizza.png"
-# define FOOD_IMAGE_4			"images/food/taco.png"
+# define FOOD_IMAGE_0				"images/food/burger.png"
+# define FOOD_IMAGE_1				"images/food/burrito.png"
+# define FOOD_IMAGE_2				"images/food/hot_dog.png"
+# define FOOD_IMAGE_3				"images/food/pizza.png"
+# define FOOD_IMAGE_4				"images/food/taco.png"
 
-# define ENEMY_IMAGE_0			"images/enemy/cat.png"
-# define ENEMY_IMAGE_1			"images/enemy/chick.png"
-# define ENEMY_IMAGE_2			"images/enemy/chicken.png"
-# define ENEMY_IMAGE_3			"images/enemy/cow.png"
-# define ENEMY_IMAGE_4			"images/enemy/crab.png"
-# define ENEMY_IMAGE_5			"images/enemy/dog.png"
-# define ENEMY_IMAGE_6			"images/enemy/duck.png"
-# define ENEMY_IMAGE_7			"images/enemy/pig.png"
+# define ENEMY_IMAGE_0				"images/enemy/cat.png"
+# define ENEMY_IMAGE_1				"images/enemy/chick.png"
+# define ENEMY_IMAGE_2				"images/enemy/chicken.png"
+# define ENEMY_IMAGE_3				"images/enemy/cow.png"
+# define ENEMY_IMAGE_4				"images/enemy/crab.png"
+# define ENEMY_IMAGE_5				"images/enemy/dog.png"
+# define ENEMY_IMAGE_6				"images/enemy/duck.png"
+# define ENEMY_IMAGE_7				"images/enemy/pig.png"
 
 class SDLModule : public IModule
 {

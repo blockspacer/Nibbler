@@ -28,13 +28,12 @@ Server::Server(unsigned short port) :
 
 Server::~Server(void)
 {
-	// printf("~Server() \n");
 	this->_socket.disconnect();
 }
 
-void			Server::sendBoardInfo(Board & board)
+void					Server::sendBoardInfo(Board & board)
 {
-	sf::Packet	packet;
+	sf::Packet			packet;
 	
 	packet << sf::Int8(BOARD_INFO)
 		<< sf::Int32(board.getWidth())
@@ -42,11 +41,11 @@ void			Server::sendBoardInfo(Board & board)
 	this->_socket.send(packet);
 }
 
-void			Server::sendStartNewRoundInfo(Snake & snake0, Snake & snake1, FoodCell & foodCell, int bgmID)
+void					Server::sendStartNewRoundInfo(Snake & snake0, Snake & snake1, FoodCell & foodCell, int bgmID)
 {
-	sf::Packet	packet;
-	SnakeCell &	snakeHeadCell0 = snake0.getHeadCell();
-	SnakeCell &	snakeHeadCell1 = snake1.getHeadCell();
+	sf::Packet			packet;
+	SnakeCell &			snakeHeadCell0 = snake0.getHeadCell();
+	SnakeCell &			snakeHeadCell1 = snake1.getHeadCell();
 
 	packet << sf::Int8(START_NEW_ROUND)
 		// Player 1 snake info
@@ -66,27 +65,23 @@ void			Server::sendStartNewRoundInfo(Snake & snake0, Snake & snake1, FoodCell & 
 		// BGM info
 		<< sf::Int8(bgmID);
 	this->_socket.send(packet);
-
-	// printf("Server::sendStartNewRoundInfo(): foodID = %d\n", foodCell.getID());
 }
 
-void			Server::sendFoodSpawnInfo(FoodCell & foodCell)
+void					Server::sendFoodSpawnInfo(FoodCell & foodCell)
 {
-	sf::Packet	packet;
+	sf::Packet			packet;
 
 	packet << sf::Int8(FOOD_SPAWNED)
 		<< sf::Int32(foodCell.getID())
 		<< sf::Int32(foodCell.getX())
 		<< sf::Int32(foodCell.getY());
 	this->_socket.send(packet);
-
-	// printf("Server::sendFoodSpawnInfo(): id = %d\n", foodCell.getID());
 }
 
-void			Server::sendEnemySpawnInfo(Enemy & enemy)
+void					Server::sendEnemySpawnInfo(Enemy & enemy)
 {
-	sf::Packet	packet;
-	EnemyCell &	enemyCell = enemy.getEnemyCell();
+	sf::Packet			packet;
+	EnemyCell &			enemyCell = enemy.getEnemyCell();
 
 	packet << sf::Int8(ENEMY_SPAWNED)
 		<< sf::Int32(enemyCell.getID())
@@ -94,17 +89,15 @@ void			Server::sendEnemySpawnInfo(Enemy & enemy)
 		<< sf::Int32(enemyCell.getY())
 		<< sf::Int8(enemyCell.getDirection());
 	this->_socket.send(packet);
-
-	printf("Server::sendEnemySpawnInfo(): id = %d\n", enemyCell.getID());
 }
 
-void			Server::receiveMessages(void)
+void					Server::receiveMessages(void)
 {
-	sf::Packet	packet;
-	sf::Socket::Status status;
+	sf::Packet			packet;
+	sf::Socket::Status	status;
 
-	sf::Int8	message_;
-	e_message	message;
+	sf::Int8			message_;
+	e_message			message;
 
 	while ((status = this->_socket.receive(packet)) == sf::Socket::Done)
 	{
@@ -131,25 +124,3 @@ void			Server::receiveMessages(void)
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

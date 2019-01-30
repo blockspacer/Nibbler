@@ -1,15 +1,8 @@
-add "extern C" shit on the 3 modules and sound module
-
-add netplay multiplayer		// FUCK DA POLICE
-
-add parsing/error checking for netplay option
+don't forget to re-enable score display
 
 
-
-
-switching modules bug:
 	
-	1 -> 3: 2 shows up too		// PROBLEM SOLVED ¯\_(ツ)_/¯ 
+
 
 
 

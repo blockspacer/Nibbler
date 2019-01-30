@@ -57,7 +57,10 @@ void				Snake::_registerSnakeCellsToBoard(void)
 	}
 }
 
-Snake::~Snake(void) { }
+Snake::~Snake(void)
+{
+
+}
 
 bool				Snake::isDead(void) const
 {
@@ -84,7 +87,7 @@ int					Snake::getPlayerID(void) const
 	return (this->_player.getID());
 }
 
-void				Snake::_getNextXY(int & nextX, int & nextY) const
+void							Snake::_getNextXY(int & nextX, int & nextY) const
 {
 	std::shared_ptr<SnakeCell>	headCell = this->_snakeCells.front();
 	int							headX = headCell->getX();
@@ -247,8 +250,7 @@ void				Snake::die(void)
 
 	AudioManager::getInstance().playSFX("death");
 	this->_isDead = true;
-	for (const std::shared_ptr<SnakeCell> snakeCell : this->_snakeCells)
-		this->_board.clearCell(snakeCell->getX(), snakeCell->getY());
+	for(size_t i = 1; i < this->_snakeCells.size(); i++)
+		this->_board.clearCell(this->_snakeCells[i]->getX(), this->_snakeCells[i]->getY());
 	this->_snakeCells.resize(1);
-	this->_board.setCell(this->_snakeCells.front());
 }

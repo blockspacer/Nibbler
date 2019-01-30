@@ -22,9 +22,12 @@ ResourceManager::ResourceManager(void)
 		throw NibblerException("SDL_GetBasePath() failed");
 }
 
-ResourceManager::~ResourceManager(void) { }
+ResourceManager::~ResourceManager(void)
+{
+	
+}
 
-std::string		ResourceManager::getBasePath(std::string filename)
+std::string			ResourceManager::getBasePath(std::string filename)
 {
 	return (this->_basePath + filename);
 }

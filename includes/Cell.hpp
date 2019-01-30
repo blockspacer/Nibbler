@@ -28,7 +28,7 @@ private:
 
 	Cell(void);
 	Cell(const Cell & src);
-	Cell &	operator=(const Cell & rhs);
+	Cell & operator=(const Cell & rhs);
 	
 };
 

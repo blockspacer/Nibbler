@@ -6,8 +6,6 @@
 # include <string>
 # include <SFML/Graphics.hpp>
 
-# define CELL_WIDTH				40
-
 class SFMLModule : public IModule
 {
 public:

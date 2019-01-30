@@ -6,8 +6,6 @@
 # include <iostream>
 # include <SFML/Network.hpp>
 
-class Nibbler;
-
 class NetworkEntity
 {
 public:
@@ -19,7 +17,7 @@ public:
 
 protected:
 
-	sf::TcpSocket	_socket;
+	sf::TcpSocket			_socket;
 
 	NetworkEntity(void);
 

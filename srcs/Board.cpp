@@ -44,15 +44,14 @@ bool		Board::isValidPosition(int x, int y) const
 
 std::vector<t_cell_data>		Board::getCellData(void) const
 {
-	Cell *						cell;
 	std::vector<t_cell_data>	dataData;
 
-	for (size_t i = 0; i < this->_cells.size(); i++)
-		if ((cell = this->_cells[i].get()))
+	for (std::shared_ptr<Cell> const & cell : this->_cells)
+		if (cell.get() != nullptr)
 			dataData.push_back(cell->getCellData());
+
 	return (dataData);
 }
-
 
 void		Board::setCell(const std::shared_ptr<Cell> & cell)
 {
@@ -75,8 +74,8 @@ void		Board::clearCell(int x, int y)
 
 void		Board::clearAllCells(void)
 {
-	for (size_t i = 0; i < this->_cells.size(); i++)
-		this->_cells[i].reset();
+	for (std::shared_ptr<Cell> & cell : this->_cells)
+		cell.reset();
 }
 
 void		Board::_findEmptyPosition(int & emptyX, int & emptyY)
@@ -113,9 +112,6 @@ FoodCell &	Board::generateFood(void)
 
 	this->_findEmptyPosition(emptyX, emptyY);
 	this->setCell(std::make_shared<FoodCell>(emptyX, emptyY, *this));
-
-	printf("Board::generateFood(): spawned food at x=%d, y=%d\n", emptyX, emptyY);
-
 	return (static_cast<FoodCell &>(*this->getCell(emptyX, emptyY)));
 }
 

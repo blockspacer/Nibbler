@@ -151,6 +151,10 @@ int					main(int argc, char * argv[])
 	{
 		std::cout << "bad_alloc exception: " << exception.what() << std::endl;
 	}
+	catch (std::exception & exception)
+	{
+		std::cout << "Exception: " << exception.what() << std::endl;	
+	}
 
 	// printf("CHECK LEAKS MOTHERFUCKER \n");
 	// while (true)

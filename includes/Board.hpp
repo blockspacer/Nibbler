@@ -15,22 +15,22 @@ public:
 	Board(int width, int height);
 	~Board(void);
 
-	int			getWidth(void) const;
-	int			getHeight(void) const;
-	Cell *		getCell(int x, int y) const;
+	int									getWidth(void) const;
+	int									getHeight(void) const;
+	Cell *								getCell(int x, int y) const;
 
-	bool		isEmptyCell(int x, int y) const;
-	bool		isValidPosition(int x, int y) const;
+	bool								isEmptyCell(int x, int y) const;
+	bool								isValidPosition(int x, int y) const;
 
-	std::vector<t_cell_data>	getCellData(void) const;
+	std::vector<t_cell_data>			getCellData(void) const;
 
-	void		setCell(const std::shared_ptr<Cell> & cell);
-	void		setCell(const std::shared_ptr<Cell> & cell, int x, int y);
-	void		clearCell(int x, int y);
-	void		clearAllCells(void);
+	void								setCell(const std::shared_ptr<Cell> & cell);
+	void								setCell(const std::shared_ptr<Cell> & cell, int x, int y);
+	void								clearCell(int x, int y);
+	void								clearAllCells(void);
 
-	FoodCell &	generateFood(void);
-	void		generateFood(int id, int posX, int posY);
+	FoodCell &							generateFood(void);
+	void								generateFood(int id, int posX, int posY);
 
 private:
 
@@ -42,7 +42,7 @@ private:
 	Board(const Board & src);
 	Board &	operator=(const Board & rhs);
 
-	void		_findEmptyPosition(int & emptyX, int & emptyY);
+	void								_findEmptyPosition(int & emptyX, int & emptyY);
 
 };
 

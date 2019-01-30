@@ -20,20 +20,19 @@ Client::Client(std::string & ipAddress, unsigned short port) :
 
 Client::~Client(void)
 {
-	// printf("~Client() \n");
 	this->_socket.disconnect();
 }
 
-void		Client::receiveBoardInfo(int & boardWidth, int & boardHeight)
+void					Client::receiveBoardInfo(int & boardWidth, int & boardHeight)
 {
-	sf::Packet	packet;
-	sf::Socket::Status status;
+	sf::Packet			packet;
+	sf::Socket::Status	status;
 
-	sf::Int8	message_;
-	sf::Int32	width_;
-	sf::Int32	height_;
+	sf::Int8			message_;
+	sf::Int32			width_;
+	sf::Int32			height_;
 
-	e_message	message;
+	e_message			message;
 
 	while ((status = this->_socket.receive(packet)) != sf::Socket::Done)
 		;
@@ -53,13 +52,13 @@ void		Client::receiveBoardInfo(int & boardWidth, int & boardHeight)
 	boardHeight = static_cast<int>(height_);
 }
 
-void			Client::receiveMessages(void)
+void					Client::receiveMessages(void)
 {
-	sf::Packet	packet;
-	sf::Socket::Status status;
+	sf::Packet			packet;
+	sf::Socket::Status	status;
 
-	sf::Int8	message_;
-	e_message	message;
+	sf::Int8			message_;
+	e_message			message;
 
 	while ((status = this->_socket.receive(packet)) == sf::Socket::Done)
 	{
@@ -77,14 +76,12 @@ void			Client::receiveMessages(void)
 			case P1_TURN_RIGHT:
 				Nibbler::getInstance().turnRightP1(true);
 				break;
-
 			case P2_TURN_LEFT:
 				Nibbler::getInstance().turnLeftP2(true);
 				break;
 			case P2_TURN_RIGHT:
 				Nibbler::getInstance().turnRightP2(true);
 				break;
-
 			case SELECT_MODULE_1:
 				Nibbler::getInstance().selectModule1(true);
 				break;
@@ -94,30 +91,21 @@ void			Client::receiveMessages(void)
 			case SELECT_MODULE_3:
 				Nibbler::getInstance().selectModule3(true);
 				break;
-
 			case FOOD_SPAWNED:
-				printf("Client::receiveMessages(): FOOD_SPAWNED \n");
 				this->_handleFoodSpawnInfo(packet);
 				break;
-
 			case ENEMY_SPAWNED:
-				printf("Client::receiveMessages(): ENEMY_SPAWNED \n");
 				this->_handleEnemySpawnInfo(packet);
 				break;
-
 			case START_NEW_ROUND:
-				printf("Client::receiveMessages(): START_NEW_ROUND \n");
 				this->_handleStartNewRoundInfo(packet);
 				break;
-
 			case UPDATE_NOW:
-				// printf("Client::receiveMessages(): UPDATE_NOW \n");
-				Nibbler::getInstance()._update();
+				Nibbler::getInstance().update();
 				break;
 			case TERMINATE:
 				Nibbler::getInstance().terminate(true);
 				break;
-
 			default:
 				std::cout << "Client::receiveMessages(): dafuq is this 🤷 \n" << std::endl;
 				break;
@@ -125,7 +113,7 @@ void			Client::receiveMessages(void)
 	}
 }
 
-void				Client::_handleStartNewRoundInfo(sf::Packet & packet)
+void					Client::_handleStartNewRoundInfo(sf::Packet & packet)
 {
 	Nibbler::getInstance().startNewRound(true);
 	this->_handleSnakeSpawnInfo(packet);
@@ -134,11 +122,11 @@ void				Client::_handleStartNewRoundInfo(sf::Packet & packet)
 	this->_handleBGMInfo(packet);
 }
 
-void				Client::_handleBGMInfo(sf::Packet & packet)
+void					Client::_handleBGMInfo(sf::Packet & packet)
 {
-	sf::Int8		bgmID_;
+	sf::Int8			bgmID_;
 
-	int				bgmID;
+	int					bgmID;
 
 	if (!(packet >> bgmID_))
 	{
@@ -149,17 +137,17 @@ void				Client::_handleBGMInfo(sf::Packet & packet)
 	AudioManager::getInstance().playBGM(bgmID);
 }
 
-void				Client::_handleSnakeSpawnInfo(sf::Packet & packet)
+void					Client::_handleSnakeSpawnInfo(sf::Packet & packet)
 {
-	sf::Int8		playerID_;
-	sf::Int32		posX_;
-	sf::Int32		posY_;
-	sf::Int8		direction_;
+	sf::Int8			playerID_;
+	sf::Int32			posX_;
+	sf::Int32			posY_;
+	sf::Int8			direction_;
 
-	int				playerID;
-	int				posX;
-	int				posY;
-	e_direction		direction;
+	int					playerID;
+	int					posX;
+	int					posY;
+	e_direction			direction;
 
 	if (!(packet >> playerID_ >> posX_ >> posY_ >> direction_))
 	{
@@ -174,15 +162,15 @@ void				Client::_handleSnakeSpawnInfo(sf::Packet & packet)
 	Nibbler::getInstance().spawnSnake(playerID, posX, posY, direction);
 }
 
-void				Client::_handleFoodSpawnInfo(sf::Packet & packet)
+void					Client::_handleFoodSpawnInfo(sf::Packet & packet)
 {
-	sf::Int32		foodID_;
-	sf::Int32		posX_;
-	sf::Int32		posY_;
+	sf::Int32			foodID_;
+	sf::Int32			posX_;
+	sf::Int32			posY_;
 
-	int				foodID;
-	int				posX;
-	int				posY;
+	int					foodID;
+	int					posX;
+	int					posY;
 
 	if (!(packet >> foodID_ >> posX_ >> posY_))
 	{
@@ -194,21 +182,19 @@ void				Client::_handleFoodSpawnInfo(sf::Packet & packet)
 	posY = static_cast<int>(posY_);
 	
 	Nibbler::getInstance().spawnFood(foodID, posX, posY);
-
-	// printf("Client::_handleFoodSpawnInfo(): id = %d\n", foodID);
 }
 
-void			Client::_handleEnemySpawnInfo(sf::Packet & packet)
+void					Client::_handleEnemySpawnInfo(sf::Packet & packet)
 {
-	sf::Int32		enemyID_;
-	sf::Int32		posX_;
-	sf::Int32		posY_;
-	sf::Int8		direction_;
+	sf::Int32			enemyID_;
+	sf::Int32			posX_;
+	sf::Int32			posY_;
+	sf::Int8			direction_;
 
-	int				enemyID;
-	int				posX;
-	int				posY;
-	e_direction		direction;
+	int					enemyID;
+	int					posX;
+	int					posY;
+	e_direction			direction;
 
 	if (!(packet >> enemyID_ >> posX_ >> posY_ >> direction_))
 	{
@@ -221,33 +207,4 @@ void			Client::_handleEnemySpawnInfo(sf::Packet & packet)
 	direction = static_cast<e_direction>(direction_);
 
 	Nibbler::getInstance().spawnEnemy(enemyID, posX, posY, direction);
-
-	printf("Client::_handleEnemySpawnInfo(): id = %d\n", enemyID);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

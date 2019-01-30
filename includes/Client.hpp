@@ -20,12 +20,12 @@ private:
 	Client(const Client & src);
 	Client & operator=(const Client & rhs);
 
-	void			_handleStartNewRoundInfo(sf::Packet & packet);
+	void				_handleStartNewRoundInfo(sf::Packet & packet);
 
-	void			_handleBGMInfo(sf::Packet & packet);
-	void			_handleSnakeSpawnInfo(sf::Packet & packet);
-	void			_handleFoodSpawnInfo(sf::Packet & packet);
-	void			_handleEnemySpawnInfo(sf::Packet & packet);
+	void				_handleBGMInfo(sf::Packet & packet);
+	void				_handleSnakeSpawnInfo(sf::Packet & packet);
+	void				_handleFoodSpawnInfo(sf::Packet & packet);
+	void				_handleEnemySpawnInfo(sf::Packet & packet);
 
 };
 

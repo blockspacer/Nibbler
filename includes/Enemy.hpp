@@ -15,12 +15,12 @@ public:
 	Enemy(int x, int y, e_direction direction, Board & board);
 	~Enemy(void);
 
-	int				getID(void) const;
-	bool			isDead(void) const;
-	e_direction		getDirection(void) const;
-	EnemyCell &		getEnemyCell(void) const;
+	int							getID(void) const;
+	bool						isDead(void) const;
+	e_direction					getDirection(void) const;
+	EnemyCell &					getEnemyCell(void) const;
 
-	void			update(void);
+	void						update(void);
 
 private:
 
@@ -34,7 +34,7 @@ private:
 	Enemy(const Enemy & src);
 	Enemy & operator=(const Enemy & rhs);
 
-	void			_getNextXY(int & nextX, int & nextY) const;
+	void						_getNextXY(int & nextX, int & nextY) const;
 
 };
 

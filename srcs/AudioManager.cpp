@@ -6,58 +6,46 @@
 
 extern "C"
 {
-	AudioManager *		createAudioModule(void)
+	AudioManager *			createAudioModule(void)
 	{
 		return (new AudioManager());
 	}
 }
 
-AudioManager *			createAudioManager(void)
+static AudioManager *		createAudioManager(void)
 {
-	const std::string	libName = "myLibAudio.so";
-	const std::string	funcName = "createAudioModule";
+	const std::string		libName = "myLibAudio.so";
+	const std::string		funcName = "createAudioModule";
 
-	void *	dl_handle = dlopen(libName.c_str(), RTLD_LAZY | RTLD_LOCAL);
+	void *					dl_handle;
+	void *					func_ptr;
+	AudioManager *			instance;
 
+	dl_handle = dlopen(libName.c_str(), RTLD_LAZY | RTLD_LOCAL);
 	if (dl_handle == nullptr)
 		throw NibblerException("dlopen() failed on " + libName);
 
-	void *	func_ptr = dlsym(dl_handle, funcName.c_str());
-
+	func_ptr = dlsym(dl_handle, funcName.c_str());
 	if (func_ptr == nullptr)
 		throw NibblerException("dlsym() failed on " + libName + " : " + funcName);
 
-	typedef AudioManager *	(*func_t)(void);
-	func_t					create = (func_t)(func_ptr);
+	instance = reinterpret_cast<AudioManager * (*)(void)>(func_ptr)();
+	if (instance == nullptr)
+		throw NibblerException("createAudioManager() failed on " + libName + " : " + funcName);
 
 	dlclose(dl_handle);
-
-	AudioManager *		instance = create();
-
-	if (instance == nullptr)
-		throw NibblerException("AudioManager::_createAudioManager() failed");
-
 	return (instance);
 }
 
-AudioManager &	AudioManager::getInstance(void)
+AudioManager &				AudioManager::getInstance(void)
 {
 	static AudioManager *	instance = createAudioManager();
 
 	return (*instance);
 }
 
-// AudioManager &	AudioManager::getInstance(void)
-// {
-// 	static AudioManager instance;
-
-// 	return (instance);
-// }
-
 AudioManager::AudioManager(void)
 {
-	printf("AudioManager() \n");
-
 	if (SDL_Init(SDL_INIT_AUDIO))
 		throw NibblerException("SDL_Init() failed");
 	
@@ -94,53 +82,51 @@ AudioManager::AudioManager(void)
 
 AudioManager::~AudioManager(void)
 {
-	printf("~AudioManager() \n");
-
-	for (size_t i = 0; i < this->_bgmClips.size(); i++)
-		Mix_FreeMusic(this->_bgmClips[i]);
-	for (const auto & clip : this->_sfxClips)
-		Mix_FreeChunk(clip.second);
+	for (Mix_Music * clip : this->_bgmClips)
+		Mix_FreeMusic(clip);
+	for (std::pair<std::string, Mix_Chunk *> item : this->_sfxClips)
+		Mix_FreeChunk(item.second);
 	Mix_Quit();
 	SDL_Quit();
 }
 
-Mix_Music *		AudioManager::_loadBGM(std::string filename)
+Mix_Music *					AudioManager::_loadBGM(std::string filename)
 {
-	Mix_Music *	clip = Mix_LoadMUS(ResourceManager::getInstance().getBasePath(filename).c_str());
+	Mix_Music *				clip = Mix_LoadMUS(ResourceManager::getInstance().getBasePath(filename).c_str());
 
 	if (!clip)
 		throw NibblerException("Mix_LoadMUS() failed on \'" + filename + "\'");
 	return (clip);
 }
 
-Mix_Chunk *		AudioManager::_loadSFX(std::string filename)
+Mix_Chunk *					AudioManager::_loadSFX(std::string filename)
 {
-	Mix_Chunk *	clip = Mix_LoadWAV(ResourceManager::getInstance().getBasePath(filename).c_str());
+	Mix_Chunk *				clip = Mix_LoadWAV(ResourceManager::getInstance().getBasePath(filename).c_str());
 	
 	if (!clip)
 		throw NibblerException("Mix_LoadWAV() failed on \'" + filename + "\'");
 	return (clip);
 }
 
-int				AudioManager::playBGM(void)
+int							AudioManager::playBGM(void)
 {
-	int			index = std::rand() % this->_bgmClips.size();
-	Mix_Music *	clip = this->_bgmClips[index];
+	int						index = std::rand() % this->_bgmClips.size();
+	Mix_Music *				clip = this->_bgmClips[index];
 
 	Mix_PlayMusic(clip, -1);		// loop forever
 	return (index);
 }
 
-void			AudioManager::playBGM(int index)
+void						AudioManager::playBGM(int index)
 {
-	Mix_Music *	clip = this->_bgmClips[index];
+	Mix_Music *				clip = this->_bgmClips[index];
 
 	Mix_PlayMusic(clip, -1);		// loop forever
 }
 
-void			AudioManager::playSFX(std::string id)
+void						AudioManager::playSFX(std::string id)
 {
-	Mix_Chunk *	clip = this->_sfxClips[id];
+	Mix_Chunk *				clip = this->_sfxClips[id];
 
 	Mix_HaltChannel(-1);
 	Mix_PlayChannel(-1, clip, 0);

@@ -1,8 +1,10 @@
 #include "SFMLModule.hpp"
 
+# define CELL_WIDTH		40
+
 extern "C"
 {
-	IModule *	createSFMLModule(int boardWidth, int boardHeight, std::string title)
+	IModule *				createSFMLModule(int boardWidth, int boardHeight, std::string title)
 	{
 		return (new SFMLModule(boardWidth, boardHeight, title));
 	}
@@ -13,27 +15,21 @@ SFMLModule::SFMLModule(int boardWidth, int boardHeight, std::string title) :
 	_boardHeight(boardHeight),
 	_title(title)
 {
-	printf("SFMLModule()\n");
-
 	this->enable();
 }
 
 SFMLModule::~SFMLModule(void)
 {
-	printf("~SFMLModule()\n");
-	
 	this->_renderWindow.close();
 }
 
-void			SFMLModule::disable(void)
+void						SFMLModule::disable(void)
 {
-	// printf("SFMLModule: disable()\n");
 	this->_renderWindow.close();
 }
 
-void			SFMLModule::enable(void)
+void						SFMLModule::enable(void)
 {
-	// printf("SFMLModule: enable()\n");
 	this->_renderWindow.create(sf::VideoMode(this->_boardWidth * CELL_WIDTH, this->_boardHeight * CELL_WIDTH), this->_title);
 	this->_renderWindow.setPosition(sf::Vector2i(0, 0));
 	this->_renderWindow.setKeyRepeatEnabled(false);
@@ -51,11 +47,10 @@ std::vector<e_event>		SFMLModule::getEvents(void)
 		else if (event.type == sf::Event::EventType::KeyPressed)
 			this->_handleKeyPressEvent(myEvents, event);
 	}
-
 	return (myEvents);
 }
 
-void			SFMLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, sf::Event & event)
+void						SFMLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, sf::Event & event)
 {
 	switch (event.key.code)
 	{
@@ -93,7 +88,7 @@ void			SFMLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, sf::Eve
 	}
 }
 
-void			SFMLModule::render(std::vector<t_cell_data> cellData)
+void						SFMLModule::render(std::vector<t_cell_data> cellData)
 {
 	this->_renderWindow.clear(sf::Color::Black);
 
@@ -103,9 +98,9 @@ void			SFMLModule::render(std::vector<t_cell_data> cellData)
 	this->_renderWindow.display();
 }
 
-void			SFMLModule::_renderCell(t_cell_data & cellData)
+void						SFMLModule::_renderCell(t_cell_data & cellData)
 {
-	sf::RectangleShape	rect;
+	sf::RectangleShape		rect;
 
 	rect.setSize(sf::Vector2f(CELL_WIDTH, CELL_WIDTH));
 	rect.setPosition(cellData.posX * CELL_WIDTH, cellData.posY * CELL_WIDTH);
@@ -126,7 +121,7 @@ void			SFMLModule::_renderCell(t_cell_data & cellData)
 	}
 }
 
-void			SFMLModule::_renderSnakeCell(t_cell_data & cellData, sf::RectangleShape & rect)
+void						SFMLModule::_renderSnakeCell(t_cell_data & cellData, sf::RectangleShape & rect)
 {
 	// Player dieded
 	if (cellData.isDead && cellData.isHead)
@@ -154,7 +149,7 @@ void			SFMLModule::_renderSnakeCell(t_cell_data & cellData, sf::RectangleShape &
 	this->_renderWindow.draw(rect);
 }
 
-void			SFMLModule::_renderFoodCell(t_cell_data & cellData, sf::RectangleShape & rect)
+void						SFMLModule::_renderFoodCell(t_cell_data & cellData, sf::RectangleShape & rect)
 {
 	(void)cellData;
 
@@ -162,31 +157,11 @@ void			SFMLModule::_renderFoodCell(t_cell_data & cellData, sf::RectangleShape & 
 	this->_renderWindow.draw(rect);
 }
 
-void			SFMLModule::_renderEnemyCell(t_cell_data & cellData, sf::RectangleShape & rect)
+void						SFMLModule::_renderEnemyCell(t_cell_data & cellData, sf::RectangleShape & rect)
 {
 	(void)cellData;
 
 	rect.setFillColor(sf::Color(255, 165, 0));	// orange
 	this->_renderWindow.draw(rect);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

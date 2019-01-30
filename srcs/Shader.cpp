@@ -84,23 +84,23 @@ Shader::~Shader(void)
 	glDeleteProgram(this->_programID);
 }
 
-void				Shader::setMatrix(std::string name, const float * matrix)
+void					Shader::setMatrix(std::string name, const float * matrix)
 {
-	unsigned int	matrixLoc = glGetUniformLocation(this->_programID, name.c_str());
+	unsigned int		matrixLoc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniformMatrix4fv(matrixLoc, 1, GL_FALSE, matrix);
 }
 
-void				Shader::setVector3(std::string name, float * vector)
+void					Shader::setVector3(std::string name, float * vector)
 {
 	unsigned int		vectorLoc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniform3fv(vectorLoc, 1, vector);
 }
 
-void				Shader::setBool(std::string name, bool value)
+void					Shader::setBool(std::string name, bool value)
 {
-	unsigned int	loc = glGetUniformLocation(this->_programID, name.c_str());
+	unsigned int		loc = glGetUniformLocation(this->_programID, name.c_str());
 
 	glUniform1i(loc, static_cast<int>(value));
 }

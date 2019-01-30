@@ -6,7 +6,7 @@
 
 extern "C"
 {
-	IModule *	createSDLModule(int boardWidth, int boardHeight, std::string title)
+	IModule *		createSDLModule(int boardWidth, int boardHeight, std::string title)
 	{
 		return (new SDLModule(boardWidth, boardHeight, title));
 	}
@@ -17,8 +17,6 @@ SDLModule::SDLModule(int boardWidth, int boardHeight, std::string title) :
 	_boardHeight(boardHeight),
 	_isGridShown(false)
 {
-	printf("SDLModule() \n");
-
 	if (SDL_Init(SDL_INIT_EVERYTHING))
 		throw NibblerException("SDL_Init() failed");
 
@@ -65,8 +63,6 @@ SDL_Texture *		SDLModule::_initTexture(std::string filename)
 
 SDLModule::~SDLModule(void)
 {
-	printf("~SDLModule()\n");
-	
 	SDL_DestroyRenderer(this->_renderer);
 	SDL_DestroyWindow(this->_window);
 	SDL_GL_DeleteContext(this->_context);
@@ -76,24 +72,23 @@ SDLModule::~SDLModule(void)
 	SDL_DestroyTexture(this->_snakeHeadP2Texture);
 	SDL_DestroyTexture(this->_snakeBodyP2Texture);
 	SDL_DestroyTexture(this->_snakeDeadTexture);
-	for (size_t i = 0; i < this->_foodTextures.size(); i++)
-		SDL_DestroyTexture(this->_foodTextures[i]);
-	for (size_t i = 0; i < this->_enemyTextures.size(); i++)
-		SDL_DestroyTexture(this->_enemyTextures[i]);
+
+	for (SDL_Texture * texture : this->_foodTextures)
+		SDL_DestroyTexture(texture);
+	for (SDL_Texture * texture : this->_enemyTextures)
+		SDL_DestroyTexture(texture);
 
 	IMG_Quit();
 	SDL_Quit();
 }
 
-void			SDLModule::disable(void)
+void				SDLModule::disable(void)
 {
-	// printf("SDLModule: disable()\n");
 	SDL_HideWindow(this->_window);
 }
 
-void			SDLModule::enable(void)
+void				SDLModule::enable(void)
 {
-	// printf("SDLModule: enable()\n");
 	SDL_GL_MakeCurrent(this->_window, this->_context);
 	SDL_ShowWindow(this->_window);
 }
@@ -114,7 +109,7 @@ std::vector<e_event>		SDLModule::getEvents(void)
 	return (myEvents);
 }
 
-void		SDLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event)
+void				SDLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event & event)
 {
 	switch (event.key.keysym.sym)
 	{
@@ -155,12 +150,12 @@ void		SDLModule::_handleKeyPressEvent(std::vector<e_event> & myEvents, SDL_Event
 	}
 }
 
-void			SDLModule::_toggleGrid(void)
+void				SDLModule::_toggleGrid(void)
 {
 	this->_isGridShown = !this->_isGridShown;
 }
 
-void			SDLModule::_drawGrid(void)
+void				SDLModule::_drawGrid(void)
 {
 	SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 0);
 	// draw vertical lines
@@ -179,7 +174,7 @@ void			SDLModule::_drawGrid(void)
 	}
 }
 
-void			SDLModule::render(std::vector<t_cell_data> cellData)
+void				SDLModule::render(std::vector<t_cell_data> cellData)
 {
 	SDL_SetRenderDrawColor(this->_renderer, 0, 0, 0, 0);
 	SDL_RenderClear(this->_renderer);
@@ -193,9 +188,9 @@ void			SDLModule::render(std::vector<t_cell_data> cellData)
 	SDL_RenderPresent(this->_renderer);
 }
 
-void			SDLModule::_renderCell(t_cell_data & cellData)
+void				SDLModule::_renderCell(t_cell_data & cellData)
 {
-	SDL_Rect	dstRect;
+	SDL_Rect		dstRect;
 
 	dstRect.x = cellData.posX * CELL_WIDTH;
 	dstRect.y = cellData.posY * CELL_WIDTH;

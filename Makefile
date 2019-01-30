@@ -24,7 +24,6 @@ SFML_LINK := -Wl,-rpath $(SFML_LOC)/lib \
 	-L $(SFML_LOC)/lib/ -lsfml-system \
 	-L $(SFML_LOC)/lib/ -lsfml-graphics \
 	-L $(SFML_LOC)/lib/ -lsfml-window
-	# -L $(SFML_LOC)/lib/ -lsfml-network \
 
 SFML_NETWORK_LINK := -Wl,-rpath $(SFML_LOC)/lib \
 	-L $(SFML_LOC)/lib/ -lsfml-system \
@@ -94,8 +93,8 @@ objs/SDLModule.o
 MY_OPENGL_OBJS := \
 objs/Model.o \
 objs/NibblerException.o \
-objs/ResourceManager.o \
 objs/OpenGLModule.o \
+objs/ResourceManager.o \
 objs/Shader.o
 
 MY_AUDIO_OBJS := \

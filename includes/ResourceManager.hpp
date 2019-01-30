@@ -9,13 +9,13 @@ public:
 
 	~ResourceManager(void);
 
-	static ResourceManager & getInstance(void);
+	static ResourceManager &	getInstance(void);
 	
-	std::string				getBasePath(std::string filename);
+	std::string					getBasePath(std::string filename);
 
 private:
 
-	std::string				_basePath;
+	std::string					_basePath;
 
 	ResourceManager(void);
 	ResourceManager(const ResourceManager & src);

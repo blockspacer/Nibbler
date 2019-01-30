@@ -4,20 +4,20 @@ Bonus:
 - Local multi-player!
 - Network multi-player!
 
-
 More Bonus:
 
 - Phat-ass UML diagram!
 - Amazing status/score board!
-- Well defined win/lose game states!
+- Well defined win/lose conditions!
 - Get rekt by cute animals!
 - Snake head looks different from snake body!
 - Each snake cell shows direction!
 
 - (SDL) G to toggle grid on/off
 
-- (OpenGL) 3D with shading!
-- (OpenGL) First/third person point of view!
+- (OpenGL) W to toggle wireframe mode!
+- (OpenGL) S to toggle shading!
+- (OpenGL) V to toggle first/third person POV!
 - (OpenGL) Pizza that spins itself!
 
 
