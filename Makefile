@@ -36,7 +36,7 @@ GLEW_LINK := -L $(GLEW_LOC)/lib/ -lGLEW
 GLM_LOC := $(shell brew --prefix glm)
 GLM_INC := $(GLM_LOC)/include/
 
-CFLAGS := -std=c++11 -Wall -Werror -Wextra -Wfatal-errors -g -fsanitize=address
+CFLAGS := -std=c++11 -Wall -Werror -Wextra -Wfatal-errors
 
 INCLUDES := includes/
 HEADERS := -I $(INCLUDES) \
@@ -126,14 +126,14 @@ $(MY_SFML_LIB):
 	@echo "\x1b[1mBuilding $(MY_SFML_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_SFML_LIB) $(MY_SFML_OBJS) \
-		$(SFML_LINK) -g -fsanitize=address
+		$(SFML_LINK)
 
 $(MY_SDL_LIB):
 	@echo "\x1b[1mBuilding $(MY_SDL_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_SDL_LIB) $(MY_SDL_OBJS) \
 		$(SDL2_LINK) \
-		$(SDL2_IMAGE_LINK) -g -fsanitize=address
+		$(SDL2_IMAGE_LINK)
 
 $(MY_OPENGL_LIB):
 	@echo "\x1b[1mBuilding $(MY_OPENGL_LIB)...\x1b[0m"
@@ -142,14 +142,14 @@ $(MY_OPENGL_LIB):
 		$(SDL2_LINK) \
 		$(SDL2_IMAGE_LINK) \
 		$(GLEW_LINK) \
-		-framework OpenGL -g -fsanitize=address
+		-framework OpenGL
 
 $(MY_AUDIO_LIB):
 	@echo "\x1b[1mBuilding $(MY_AUDIO_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_AUDIO_LIB) $(MY_AUDIO_OBJS) \
 		$(SDL2_LINK) \
-		$(SDL2_MIXER_LINK) -g -fsanitize=address
+		$(SDL2_MIXER_LINK)
 
 $(OBJDIR)%.o: $(SRCSDIR)%.cpp
 	@mkdir -p $(OBJDIR)
@@ -159,7 +159,7 @@ $(TARGET): $(OBJS) $(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OPENGL_LIB) $(MY_AUDIO_LIB)
 	@echo "\x1b[1mBuilding $(TARGET)...\x1b[0m"
 	$(CC) -o $(TARGET) $(REMAINING_OBJS) \
 		$(MY_SFML_LIB) $(MY_SDL_LIB) $(MY_OPENGL_LIB) $(MY_AUDIO_LIB) \
-		$(SFML_NETWORK_LINK) -g -fsanitize=address
+		$(SFML_NETWORK_LINK)
 	@echo "\x1b[1mBuild finished!!\x1b[0m"
 
 clean:
