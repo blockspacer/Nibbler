@@ -20,11 +20,3 @@ More Bonus:
 - (OpenGL) V to toggle first/third person POV!
 - (OpenGL) Pizza that spins itself!
 
-
-
-
-TODO:
-
-- Network multi-player!		// fuck da police
-
-
