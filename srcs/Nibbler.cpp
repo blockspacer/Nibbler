@@ -257,11 +257,11 @@ void						Nibbler::_loop(void)
 
 			if (t >= MS_PER_UPDATE)
 			{
-				this->update();
-				t -= MS_PER_UPDATE;
-
 				if (this->_server != nullptr)
 					this->_server->sendMessage(UPDATE_NOW);
+
+				this->update();
+				t -= MS_PER_UPDATE;
 			}			
 		}
 		this->_render();
