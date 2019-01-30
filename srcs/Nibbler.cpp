@@ -265,7 +265,7 @@ void						Nibbler::_loop(void)
 			}			
 		}
 		this->_render();
-		// this->_displayGameStatus();		// PUT IT BACK YO
+		this->_displayGameStatus();		// PUT IT BACK YO
 	}
 }
 
