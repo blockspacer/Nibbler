@@ -70,7 +70,7 @@ void				startGame(t_options & options)
 
 void				terminateWithUsageError(void)
 {
-	std::cout << "\nusage:\n" \
+	std::cout << "usage:\n" \
 		"Local Game\t\t: Nibbler -l numPlayers boardWidth boardHeight\n" \
 		"Online 2P as Server\t: Nibbler -s port boardWidth boardHeight\n" \
 		"Online 2P as Client\t: Nibbler -c ipAddress port" << std::endl;
