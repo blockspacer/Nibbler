@@ -122,20 +122,20 @@ objs/main.o
 
 all: $(TARGET)
 
-$(MY_SFML_LIB):
+$(MY_SFML_LIB): $(MY_SFML_OBJS)
 	@echo "\x1b[1mBuilding $(MY_SFML_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_SFML_LIB) $(MY_SFML_OBJS) \
 		$(SFML_LINK)
 
-$(MY_SDL_LIB):
+$(MY_SDL_LIB): $(MY_SDL_OBJS)
 	@echo "\x1b[1mBuilding $(MY_SDL_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_SDL_LIB) $(MY_SDL_OBJS) \
 		$(SDL2_LINK) \
 		$(SDL2_IMAGE_LINK)
 
-$(MY_OPENGL_LIB):
+$(MY_OPENGL_LIB): $(MY_OPENGL_OBJS)
 	@echo "\x1b[1mBuilding $(MY_OPENGL_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_OPENGL_LIB) $(MY_OPENGL_OBJS) \
@@ -144,7 +144,7 @@ $(MY_OPENGL_LIB):
 		$(GLEW_LINK) \
 		-framework OpenGL
 
-$(MY_AUDIO_LIB):
+$(MY_AUDIO_LIB): $(MY_AUDIO_OBJS)
 	@echo "\x1b[1mBuilding $(MY_AUDIO_LIB)...\x1b[0m"
 	$(CC) -shared -fPIC $(HEADERS) \
 		-o $(MY_AUDIO_LIB) $(MY_AUDIO_OBJS) \
