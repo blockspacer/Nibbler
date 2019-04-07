@@ -1,9 +1,5 @@
 .DS_Store
 ._*
 objs
-*.o
-*.so
 Nibbler
-correction_fr.txt
-*.pdf
-
+*.so
