@@ -1,6 +1,12 @@
 # Nibbler
 Classic snake game, but also online multiplayer first-person 3D survival frogger, in C++ using SFML, SDL2, and OpenGL. (42 Silicon Valley)
 
+<p float="left">
+  <img src="https://github.com/ashih42/Nibbler/blob/master/Screenshots/sfml.png" width="280" />
+  <img src="https://github.com/ashih42/Nibbler/blob/master/Screenshots/sdl.png" width="280" /> 
+  <img src="https://github.com/ashih42/Nibbler/blob/master/Screenshots/opengl.png" width="285" />
+</p>
+
 ## Prerequisites
 
 You are on macOS with `clang++`, `make`, and `brew` installed.
