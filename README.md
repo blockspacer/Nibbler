@@ -48,16 +48,16 @@ You are on macOS with `clang++`, `make`, and `brew` installed.
 ## Controls
 
 ### Gameplay Controls
-* **Player 1:** `Left Arrow`, `Right Arrow` to turn.
-* **Player 2:** `Numpad 4`, `Numpad 6` to turn.
-* `R` to restart.
-* `Escape` to terminate.
+* **Player 1:** `Left Arrow`, `Right Arrow` Turn left or right.
+* **Player 2:** `Numpad 4`, `Numpad 6` Turn left or right.
+* `R` Restart new round.
+* `Escape` Terminate the game.
 
 ### Graphics Controls
-1. `1` to select **SFML** visualizer.
-2. `2` to select **SDL2** visualizer.
-    * `G` to toggle grid.
-3. `3` to select **OpenGL** visualizer.
-    * `W` to toggle wireframe mode.
-    * `S` to toggle shading.
-    * `V` to toggle first/third person POV.
+1. `1` Select **SFML** visualizer.
+2. `2` Select **SDL2** visualizer.
+    * `G` Toggle grid.
+3. `3` Select **OpenGL** visualizer.
+    * `W` Toggle wireframe mode.
+    * `S` Toggle shading.
+    * `V` Toggle first/third person POV.
