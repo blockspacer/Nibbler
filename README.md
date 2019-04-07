@@ -1,5 +1,5 @@
 # Nibbler
-Classic snake game, but also online multiplayer first-person 3D survival frogger, in C++ using SFML, SDL2, and OpenGL. (42 Silicon Valley)
+Classic game [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre)), but also online multiplayer first-person 3D survival frogger, in C++ using SFML, SDL2, and OpenGL. (42 Silicon Valley)
 
 <p float="left">
   <img src="https://github.com/ashih42/Nibbler/blob/master/Screenshots/sfml.png" width="280" />
