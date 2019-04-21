@@ -7,6 +7,10 @@ Classic game [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre)), wi
   <img src="https://github.com/ashih42/Nibbler/blob/master/Screenshots/opengl.png" width="285" />
 </p>
 
+To win each round, you must:
+* Reach length of 10.
+* (Multi-player) Survive longer than the opponent.
+
 ## Prerequisites
 
 You are on macOS with `clang++`, `make`, and `brew` installed.
